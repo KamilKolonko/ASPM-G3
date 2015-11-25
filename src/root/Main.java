@@ -2,6 +2,8 @@ package root;
 
 import java.awt.EventQueue;
 
+import dialog.MainWindow;
+
 public class Main {
 
     public static void main(String[] args) {

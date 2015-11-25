@@ -1,4 +1,4 @@
-package root;
+package dialog;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -9,6 +9,7 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -18,17 +19,31 @@ import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.MenuKeyListener;
+
+import javafx.embed.swing.JFXPanel;
+import root.Player;
+
+import javax.swing.event.MenuKeyEvent;
+import java.awt.event.ActionListener;
+import java.io.File;
+import java.awt.event.ActionEvent;
+import javax.swing.JLabel;
+import javax.swing.JToggleButton;
+import java.awt.event.ItemListener;
+import java.awt.event.ItemEvent;
 
 public class MainWindow extends JFrame {
 
     private JPanel contentPane;
+    final JFileChooser fc = new JFileChooser();
+    private File currentFile;
+    private Player player;
 
-    /**
-     * Create the frame.
-     */
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setBounds(100, 100, 538, 377);
+	new JFXPanel();
 
 	JMenuBar menuBar = new JMenuBar();
 	setJMenuBar(menuBar);
@@ -72,10 +87,11 @@ public class MainWindow extends JFrame {
 	btnNewButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward.png")));
 	panelPlayButtons.add(btnNewButton);
 
-	JButton btnNewButton_1 = new JButton("");
-	btnNewButton_1.setBackground(Color.WHITE);
-	btnNewButton_1.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
-	panelPlayButtons.add(btnNewButton_1);
+	final JToggleButton toggleButton = new JToggleButton("");
+	toggleButton.setBackground(Color.WHITE);
+	toggleButton.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
+	toggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
+	panelPlayButtons.add(toggleButton);
 
 	JButton btnNewButton_2 = new JButton("");
 	btnNewButton_2.setBackground(Color.WHITE);
@@ -91,9 +107,48 @@ public class MainWindow extends JFrame {
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
 
+	JLabel lblCurrentlyPlayed = new JLabel("Currently played:");
+	panelMainCenter.add(lblCurrentlyPlayed);
+
+	final JLabel lblFileName = new JLabel("");
+	panelMainCenter.add(lblFileName);
+
 	JSeparator separator = new JSeparator();
 	separator.setOrientation(SwingConstants.VERTICAL);
 	panelMainCenter.add(separator);
-    }
 
+	mntmOpen.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		int returnVal = fc.showOpenDialog(contentPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+		    currentFile = fc.getSelectedFile();
+		    lblFileName.setText(currentFile.getName());
+		    if(player != null && player.isPlaying()){
+			player.stop();
+			toggleButton.setSelected(false);
+		    }
+		    player = new Player(currentFile.getAbsolutePath());
+		}
+	    }
+	});
+
+	toggleButton.addItemListener(new ItemListener() {
+	    public void itemStateChanged(ItemEvent e) {
+		if (e.getStateChange() == ItemEvent.SELECTED) {
+		    if (player != null) {
+			player.resume();
+		    } else {
+			if(currentFile != null){
+			    player = new Player(currentFile.getAbsolutePath());
+			    player.play();
+			}
+		    }
+		} else {
+		    if(player != null){
+			player.pause();
+		    }
+		}
+	    }
+	});
+    }
 }
