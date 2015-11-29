@@ -7,7 +7,7 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 
 
-
+//test by wgli
 
 public class Player {
     
