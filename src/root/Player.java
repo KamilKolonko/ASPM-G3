@@ -55,5 +55,13 @@ public class Player {
 	} else {
 	    return null;
 	}
+	
     }
+    public void setVolume(int v){
+    	mediaPlayer.setVolume(v);
+    }
+    public double getVolume(){
+    	return mediaPlayer.getVolume();
+    }
+
 }

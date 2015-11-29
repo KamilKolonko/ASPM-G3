@@ -3,6 +3,7 @@ package dialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
@@ -24,6 +25,8 @@ import javax.swing.event.MenuKeyListener;
 import javafx.embed.swing.JFXPanel;
 import root.Player;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuKeyEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -97,6 +100,36 @@ public class MainWindow extends JFrame {
 	btnNewButton_2.setBackground(Color.WHITE);
 	btnNewButton_2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
 	panelPlayButtons.add(btnNewButton_2);
+
+	
+	JButton btnNewButton_3 = new JButton("");
+	btnNewButton_3.setBackground(Color.WHITE);
+	btnNewButton_3.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
+	panelPlayButtons.add(btnNewButton_3);
+
+	JSlider volumeSlider = new JSlider();
+	volumeSlider.setPreferredSize(new Dimension(150, 22));
+	//volumeSlider.setOpaque(false);
+	volumeSlider.setMaximum(150);
+	volumeSlider.setMinimum(0);
+	volumeSlider.setValue(100);
+	volumeSlider.setToolTipText("change volume");
+	//volumeSlider.setUI(new VolumeSliderUI());
+	volumeSlider.setPaintTicks(true);
+	panelPlayButtons.add(volumeSlider);
+	volumeSlider.addChangeListener( new ChangeListener(){
+		@Override
+		public void stateChanged(ChangeEvent e) {
+			// TODO Auto-generated method stub
+			System.out.println(volumeSlider.getValue());
+			System.out.println("older");
+			System.out.println(player.getVolume());
+        	player.setVolume(volumeSlider.getValue());
+        	System.out.println("new");	
+        	System.out.println(player.getVolume());
+		}
+		
+	});
 
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
