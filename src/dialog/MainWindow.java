@@ -112,7 +112,7 @@ public class MainWindow extends JFrame {
 	//volumeSlider.setOpaque(false);
 	volumeSlider.setMaximum(150);
 	volumeSlider.setMinimum(0);
-	volumeSlider.setValue(100);
+	volumeSlider.setValue(50);
 	volumeSlider.setToolTipText("change volume");
 	//volumeSlider.setUI(new VolumeSliderUI());
 	volumeSlider.setPaintTicks(true);
@@ -124,7 +124,9 @@ public class MainWindow extends JFrame {
 			System.out.println(volumeSlider.getValue());
 			System.out.println("older");
 			System.out.println(player.getVolume());
-        	player.setVolume(volumeSlider.getValue());
+			if (player != null){
+			    player.setVolume((double)volumeSlider.getValue()/volumeSlider.getMaximum());
+			}
         	System.out.println("new");	
         	System.out.println(player.getVolume());
 		}
