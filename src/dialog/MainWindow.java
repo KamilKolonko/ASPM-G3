@@ -1,6 +1,8 @@
 package dialog;
 
+
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
@@ -32,6 +34,10 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+
+
+
+
 
 public class MainWindow extends JFrame {
 
