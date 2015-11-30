@@ -2,39 +2,57 @@ package root;
 
 import java.io.File;
 
+ 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
 
 
-
-
-public class Player {
+public class Player  {
     
     private MediaPlayer mediaPlayer;
     private Media file;
+    private double getTotaltime;
+
+  
     
     public Player(String filePath){
-	file = new Media(new File(filePath).toURI().toString());
-	mediaPlayer = new MediaPlayer(file);
+		file = new Media(new File(filePath).toURI().toString());
+		mediaPlayer = new MediaPlayer(file);
+		getTotaltime = mediaPlayer.getTotalDuration().toSeconds();	
     }
     
+    public void setTotaltime(){
+    }
+    public double getTotaltime() {
+    	return mediaPlayer.getTotalDuration().toMillis();	
+    }
+    public double getCrrenttime(){
+    	return mediaPlayer.getCurrentTime().toMillis() / getTotaltime;
+    }
+    public void setCrrenttime(double changeTime) {
+    	mediaPlayer.seek(Duration.millis(changeTime));
+    	
+    }
     public void play(){
-	mediaPlayer.play();
+    	mediaPlayer.play();
+	
     }
     
     public void play(String filePath){
-	file = new Media(new File(filePath).toURI().toString());
-	mediaPlayer = new MediaPlayer(file);
-	play();
+		file = new Media(new File(filePath).toURI().toString());
+		mediaPlayer = new MediaPlayer(file);
+		play();
     }
     
     public boolean isPlaying(){
-	if(mediaPlayer != null){
-	    return mediaPlayer.getStatus().equals(Status.PLAYING);
-	} else {
-	    return false;
-	}
+		if(mediaPlayer != null){
+			System.out.println("it is in playing...");
+		    return mediaPlayer.getStatus().equals(Status.PLAYING);
+		} else {
+		    return false;
+		}
     }
     
     public void stop(){

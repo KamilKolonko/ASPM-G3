@@ -2,10 +2,16 @@ package dialog;
 
 
 import java.awt.BorderLayout;
-
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.beans.PropertyChangeListener;
+import java.io.File;
+
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -13,30 +19,25 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
+import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.MenuKeyListener;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.Timer;
+import java.util.concurrent.TimeUnit;
+
 
 import javafx.embed.swing.JFXPanel;
+import javafx.util.Duration;
 import root.Player;
-
-import javax.swing.event.MenuKeyEvent;
-import java.awt.event.ActionListener;
-import java.io.File;
-import java.awt.event.ActionEvent;
-import javax.swing.JLabel;
-import javax.swing.JToggleButton;
-import java.awt.event.ItemListener;
-import java.awt.event.ItemEvent;
-
-
-
 
 
 public class MainWindow extends JFrame {
@@ -45,12 +46,13 @@ public class MainWindow extends JFrame {
     final JFileChooser fc = new JFileChooser();
     private File currentFile;
     private Player player;
-
+    private Double changeTime;
+   
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setBounds(100, 100, 538, 377);
 	new JFXPanel();
-
+	
 	JMenuBar menuBar = new JMenuBar();
 	setJMenuBar(menuBar);
 
@@ -77,10 +79,21 @@ public class MainWindow extends JFrame {
 	JPanel panelSlider = new JPanel();
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
-
-	JSlider slider = new JSlider();
+    
+	
+	JSlider slider = new JSlider();	 
 	slider.setValue(0);
 	panelSlider.add(slider);
+	slider.addChangeListener(new ChangeListener() {
+		public void stateChanged(ChangeEvent e) {
+			JSlider source = (JSlider)e.getSource();
+			if (source == slider) {
+				changeTime = slider.getValue()*player.getTotaltime()/100.0;
+				player.setCrrenttime(changeTime);	 
+			}
+			
+		}
+	});
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
@@ -122,7 +135,7 @@ public class MainWindow extends JFrame {
 	JSeparator separator = new JSeparator();
 	separator.setOrientation(SwingConstants.VERTICAL);
 	panelMainCenter.add(separator);
-
+	
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		int returnVal = fc.showOpenDialog(contentPane);
@@ -133,6 +146,7 @@ public class MainWindow extends JFrame {
 			player.stop();
 			toggleButton.setSelected(false);
 		    }
+		     
 		    player = new Player(currentFile.getAbsolutePath());
 		}
 	    }
@@ -140,21 +154,24 @@ public class MainWindow extends JFrame {
 
 	toggleButton.addItemListener(new ItemListener() {
 	    public void itemStateChanged(ItemEvent e) {
-		if (e.getStateChange() == ItemEvent.SELECTED) {
+		if (e.getStateChange() == ItemEvent.SELECTED) { 
 		    if (player != null) {
-			player.resume();
+		    	player.resume();
+		    	int startSecond = 0;
+		  
 		    } else {
-			if(currentFile != null){
-			    player = new Player(currentFile.getAbsolutePath());
-			    player.play();
-			}
+				if(currentFile != null){
+				    player = new Player(currentFile.getAbsolutePath());
+				    player.play();
+				}
 		    }
 		} else {
 		    if(player != null){
-			player.pause();
+		    	player.pause();
 		    }
 		}
 	    }
 	});
     }
+   
 }
