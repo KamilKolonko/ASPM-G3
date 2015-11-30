@@ -6,9 +6,7 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 
-
-//test by wgli
-
+//test
 public class Player {
     
     private MediaPlayer mediaPlayer;
