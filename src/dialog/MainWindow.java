@@ -3,6 +3,7 @@ package dialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 
 import javax.swing.Box;
@@ -24,6 +25,8 @@ import javax.swing.event.MenuKeyListener;
 import javafx.embed.swing.JFXPanel;
 import root.Player;
 
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuKeyEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -32,6 +35,8 @@ import javax.swing.JLabel;
 import javax.swing.JToggleButton;
 import java.awt.event.ItemListener;
 import java.awt.event.ItemEvent;
+import javax.swing.JList;
+import java.awt.GridBagLayout;
 
 public class MainWindow extends JFrame {
 
@@ -98,6 +103,31 @@ public class MainWindow extends JFrame {
 	btnNewButton_2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
 	panelPlayButtons.add(btnNewButton_2);
 
+	JButton btnNewButton_3 = new JButton("");
+	btnNewButton_3.setBackground(Color.WHITE);
+	btnNewButton_3.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
+	panelPlayButtons.add(btnNewButton_3);
+
+	final JSlider volumeSlider = new JSlider();
+	volumeSlider.setPreferredSize(new Dimension(150, 22));
+	// volumeSlider.setOpaque(false);
+	volumeSlider.setMaximum(150);
+	volumeSlider.setMinimum(0);
+	volumeSlider.setValue(50);
+	volumeSlider.setToolTipText("change volume");
+	// volumeSlider.setUI(new VolumeSliderUI());
+	volumeSlider.setPaintTicks(true);
+	panelPlayButtons.add(volumeSlider);
+	volumeSlider.addChangeListener(new ChangeListener() {
+	    @Override
+	    public void stateChanged(ChangeEvent e) {
+		if (player != null) {
+		    player.setVolume((double) volumeSlider.getValue() / volumeSlider.getMaximum());
+		}
+	    }
+
+	});
+
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
 
@@ -106,24 +136,18 @@ public class MainWindow extends JFrame {
 
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
-
-	JLabel lblCurrentlyPlayed = new JLabel("Currently played:");
-	panelMainCenter.add(lblCurrentlyPlayed);
-
-	final JLabel lblFileName = new JLabel("");
-	panelMainCenter.add(lblFileName);
-
-	JSeparator separator = new JSeparator();
-	separator.setOrientation(SwingConstants.VERTICAL);
-	panelMainCenter.add(separator);
+	panelMainCenter.setLayout(new GridLayout(1, 0, 0, 0));
+	
+	JList list = new JList();
+	panelMainCenter.add(list);
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		int returnVal = fc.showOpenDialog(contentPane);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    currentFile = fc.getSelectedFile();
-		    lblFileName.setText(currentFile.getName());
-		    if(player != null && player.isPlaying()){
+		    //lblFileName.setText(currentFile.getName());
+		    if (player != null && player.isPlaying()) {
 			player.stop();
 			toggleButton.setSelected(false);
 		    }
@@ -138,13 +162,13 @@ public class MainWindow extends JFrame {
 		    if (player != null) {
 			player.resume();
 		    } else {
-			if(currentFile != null){
+			if (currentFile != null) {
 			    player = new Player(currentFile.getAbsolutePath());
 			    player.play();
 			}
 		    }
 		} else {
-		    if(player != null){
+		    if (player != null) {
 			player.pause();
 		    }
 		}
