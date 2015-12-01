@@ -259,9 +259,15 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		System.out.println("change color");
-
-		
+		int i=1;
+		MusicList ls = new MusicList();
+		player = new Player(ls.getList().get(jt.getSelectedRow()).getPath());
+		if(i/2 != 0){
+			player.play();
+			i++;
+		}else{
+			player.stop();
+		}
 	}
 
 	@Override
