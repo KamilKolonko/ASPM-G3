@@ -3,37 +3,26 @@ package dialog;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
-import javax.swing.JTable;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuKeyListener;
-import javax.swing.table.TableCellRenderer;
 
 import javafx.embed.swing.JFXPanel;
-import list.FileList;
-import list.MusicList;
-import list.MyJPanel;
-import model.Music;
-import model.Model;
 import root.Player;
 
 import javax.swing.event.ChangeEvent;
@@ -41,33 +30,20 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.MenuKeyEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JLabel;
 import javax.swing.JToggleButton;
-import javax.swing.ListSelectionModel;
-
 import java.awt.event.ItemListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.awt.event.ItemEvent;
 import javax.swing.JList;
 import java.awt.GridBagLayout;
 
-public class MainWindow extends JFrame implements MouseListener, WindowListener {
+public class MainWindow extends JFrame {
 
     private JPanel contentPane;
     final JFileChooser fc = new JFileChooser();
     private File currentFile;
     private Player player;
-    private MusicList list;
-    private JPanel[] showMusicList;
-    private JScrollPane jsp;
-	private JTable jt;
-	private Model model;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -162,56 +138,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
 	panelMainCenter.setLayout(new GridLayout(1, 0, 0, 0));
 	
-	
-    showMusicList = new JPanel[list.getList().size()];
-    for (int i = 0; i < list.getList().size(); i++) {
-		
-		Music music=list.getList().get(i);
-		
-		JPanel jPanel=new MyJPanel(music);
-		
-		
-		JLabel jLabel=new JLabel(music.getName(),SwingConstants.CENTER);
-		jLabel.setSize(300, 10);
-		jLabel.setHorizontalTextPosition(JLabel.CENTER);
-		jPanel.setBackground(Color.WHITE);
-		showMusicList[i]=jPanel;
-		jPanel.addMouseListener(this);		
-		jPanel.add(jLabel);
-		panelMainCenter.add(jPanel);		
-	 }
-    model = new Model();
-    jt = new JTable(model){
-    	  public Component prepareRenderer(TableCellRenderer renderer,
-				     int row, int column) {
-				    Component c = super.prepareRenderer(renderer, row, column);
-				    if (c instanceof JComponent) {
-				     ((JComponent) c).setOpaque(false);
-				    }
-				    return c;
-				   }
-    };
-    jt.setOpaque(false);
-	
-	jt.setRowHeight(30);
-	jt.setSelectionMode(ListSelectionModel.SINGLE_SELECTION );
-	jt.setShowHorizontalLines(false);
-	jt.setSelectionBackground(new Color(226,41,34));
-	jt.addMouseListener(this);
-	jsp = new JScrollPane(jt);
-	jsp.setOpaque(false);
-	jsp.getViewport().setOpaque(false);
-	this.add(jsp,BorderLayout.CENTER);
-	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-	this.addWindowListener(this);
-	
-    Image image=this.getToolkit().getImage("/icons/connected10.png");
-    
-    this.setIconImage(image);
-	
-	this.setTitle("music player");
-	
-
+	JList list = new JList();
+	panelMainCenter.add(list);
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -247,115 +175,4 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	    }
 	});
     }
-
-	public JTable getJt() {
-		return jt;
-	}
-
-	public void setJt(JTable jt) {
-		this.jt = jt;
-	}
-
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("change color");
-
-		
-	}
-
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowOpened(WindowEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("open");
-		
-		File file=new File("file/musiclist.txt");
-		
-		if (file.exists()==false) {
-			try {
-				file.createNewFile();
-			} catch (IOException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-		}else {
-
-			FileList.readFileByLines("file/musiclist.txt");
-			jt.setModel(new Model());
-		}
-		
-	}
-
-	@Override
-	public void windowClosing(WindowEvent e) {
-		// TODO Auto-generated method stub
-		System.out.println("close");
-		
-		if (MusicList.getList().size()!=0) {
-			System.out.println("write");
-            //clean
-			FileList.clear("file/musiclist.txt");
-			ArrayList<Music> list=MusicList.getList();
-			for (int i = 0; i < list.size(); i++) {
-				FileList.writeFile("file/musiclist.txt",list.get(i).getId()+","+list.get(i).getName()+","
-						+list.get(i).getPath()+"\n");
-			}
-			
-		}
-		
-	}
-
-	@Override
-	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowIconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeiconified(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowActivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void windowDeactivated(WindowEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 }

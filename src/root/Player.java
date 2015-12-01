@@ -7,17 +7,15 @@ import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 
 //test
-public class Player{
+public class Player {
     
     private MediaPlayer mediaPlayer;
     private Media file;
     
- 
     public Player(String filePath){
 	file = new Media(new File(filePath).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
     }
-
     
     public void play(){
 	mediaPlayer.play();
@@ -66,5 +64,4 @@ public class Player{
     	return mediaPlayer.getVolume();
     }
 
-    
 }
