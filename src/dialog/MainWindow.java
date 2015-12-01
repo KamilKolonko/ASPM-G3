@@ -77,9 +77,19 @@ public class MainWindow extends JFrame {
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
 
-	JSlider slider = new JSlider();
+	JSlider slider = new JSlider();	 
 	slider.setValue(0);
 	panelSlider.add(slider);
+	slider.addChangeListener(new ChangeListener() {
+		public void stateChanged(ChangeEvent e) {
+			JSlider source = (JSlider)e.getSource();
+			if (source == slider) {
+				
+				player.setCrrenttime(slider.getValue()*player.getTotaltime()/100.0);	 
+			}
+			
+		}
+	});
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);

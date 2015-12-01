@@ -5,16 +5,31 @@ import java.io.File;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
+import javafx.util.Duration;
 
-//test
+
 public class Player {
     
     private MediaPlayer mediaPlayer;
     private Media file;
+    private double getTotaltime;
     
     public Player(String filePath){
 	file = new Media(new File(filePath).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
+    }
+    
+    public void setTotaltime(){
+    }
+    public double getTotaltime() {
+    	return mediaPlayer.getTotalDuration().toMillis();	
+    }
+    public double getCrrenttime(){
+    	return mediaPlayer.getCurrentTime().toMillis() / getTotaltime;
+    }
+    public void setCrrenttime(double changeTime) {
+    	mediaPlayer.seek(Duration.millis(changeTime));
+    	
     }
     
     public void play(){
