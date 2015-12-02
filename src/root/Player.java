@@ -2,25 +2,21 @@ package root;
 
 import java.io.File;
 
- 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 
 
-public class Player  {
+public class Player {
     
     private MediaPlayer mediaPlayer;
     private Media file;
     private double getTotaltime;
-
-  
     
     public Player(String filePath){
-		file = new Media(new File(filePath).toURI().toString());
-		mediaPlayer = new MediaPlayer(file);
-		getTotaltime = mediaPlayer.getTotalDuration().toSeconds();	
+	file = new Media(new File(filePath).toURI().toString());
+	mediaPlayer = new MediaPlayer(file);
     }
     
     public void setTotaltime(){
@@ -35,24 +31,23 @@ public class Player  {
     	mediaPlayer.seek(Duration.millis(changeTime));
     	
     }
+    
     public void play(){
-    	mediaPlayer.play();
-	
+	mediaPlayer.play();
     }
     
     public void play(String filePath){
-		file = new Media(new File(filePath).toURI().toString());
-		mediaPlayer = new MediaPlayer(file);
-		play();
+	file = new Media(new File(filePath).toURI().toString());
+	mediaPlayer = new MediaPlayer(file);
+	play();
     }
     
     public boolean isPlaying(){
-		if(mediaPlayer != null){
-			System.out.println("it is in playing...");
-		    return mediaPlayer.getStatus().equals(Status.PLAYING);
-		} else {
-		    return false;
-		}
+	if(mediaPlayer != null){
+	    return mediaPlayer.getStatus().equals(Status.PLAYING);
+	} else {
+	    return false;
+	}
     }
     
     public void stop(){
@@ -73,5 +68,15 @@ public class Player  {
 	} else {
 	    return null;
 	}
+	
     }
+    
+    public void setVolume(double d){
+    	mediaPlayer.setVolume(d);
+    }
+    
+    public double getVolume(){
+    	return mediaPlayer.getVolume();
+    }
+
 }
