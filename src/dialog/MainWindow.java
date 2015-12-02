@@ -49,6 +49,7 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -101,9 +102,15 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
 
-	JSlider slider = new JSlider();
+	JSlider slider = new JSlider();	 
 	slider.setValue(0);
 	panelSlider.add(slider);
+	slider.addMouseListener(new MouseAdapter(){
+		public void mouseReleased(MouseEvent e){
+			player.setCrrenttime(slider.getValue()*player.getTotaltime()/100);
+		}
+	});
+	
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
@@ -364,4 +371,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		// TODO Auto-generated method stub
 		
 	}
+
 }
+
+
+

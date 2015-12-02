@@ -25,12 +25,14 @@ public class Player {
     	return mediaPlayer.getTotalDuration().toMillis();	
     }
     public double getCrrenttime(){
-    	return mediaPlayer.getCurrentTime().toMillis() / getTotaltime;
+    	return mediaPlayer.getCurrentTime().toSeconds();
     }
     public void setCrrenttime(double changeTime) {
     	mediaPlayer.seek(Duration.millis(changeTime));
     	
     }
+    
+  
     
     public void play(){
 	mediaPlayer.play();
