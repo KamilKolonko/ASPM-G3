@@ -12,27 +12,35 @@ public class Player {
     
     private MediaPlayer mediaPlayer;
     private Media file;
-    private double getTotaltime;
+
     
     public Player(String filePath){
 	file = new Media(new File(filePath).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
-    }
     
-    public void setTotaltime(){
     }
+    public double returnCurrentTimeProperty()
+    {
+    	return mediaPlayer.getCurrentTime().toMillis();
+    }
+
+    public MediaPlayer returnMediaPlayer(){
+		return mediaPlayer;
+    	
+    }
+	
+    public double synchronizeSliderValue(){
+    	return mediaPlayer.getCurrentTime().toMillis()/mediaPlayer.getTotalDuration().toMillis()*2000;
+    }
+     
     public double getTotaltime() {
     	return mediaPlayer.getTotalDuration().toMillis();	
     }
-    public double getCrrenttime(){
-    	return mediaPlayer.getCurrentTime().toSeconds();
-    }
+        
     public void setCrrenttime(double changeTime) {
     	mediaPlayer.seek(Duration.millis(changeTime));
     	
     }
-    
-  
     
     public void play(){
 	mediaPlayer.play();
@@ -80,5 +88,6 @@ public class Player {
     public double getVolume(){
     	return mediaPlayer.getVolume();
     }
+
 
 }

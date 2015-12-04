@@ -28,7 +28,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuKeyListener;
 import javax.swing.table.TableCellRenderer;
 
+import javafx.beans.InvalidationListener;
 import javafx.embed.swing.JFXPanel;
+import javafx.scene.media.MediaPlayer;
 import list.FileList;
 import list.MusicList;
 import list.MyJPanel;
@@ -58,6 +60,8 @@ import java.awt.event.ItemEvent;
 import javax.swing.JList;
 import java.awt.GridBagLayout;
 
+import java.lang.Thread;
+
 public class MainWindow extends JFrame implements MouseListener, WindowListener {
 
     private JPanel contentPane;
@@ -69,6 +73,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     private JScrollPane jsp;
 	private JTable jt;
 	private Model model;
+
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -101,17 +106,15 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	JPanel panelSlider = new JPanel();
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
-
-	JSlider slider = new JSlider();	 
+    
+	JSlider slider = new JSlider();
+	slider.setMaximum(2000);
 	slider.setValue(0);
 	panelSlider.add(slider);
-	slider.addMouseListener(new MouseAdapter(){
-		public void mouseReleased(MouseEvent e){
-			player.setCrrenttime(slider.getValue()*player.getTotaltime()/100);
-		}
-	});
+    
 	
-
+	
+	
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
 
@@ -208,7 +211,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	jsp = new JScrollPane(jt);
 	jsp.setOpaque(false);
 	jsp.getViewport().setOpaque(false);
-	this.add(jsp,BorderLayout.CENTER);
+	getContentPane().add(jsp,BorderLayout.CENTER);
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.addWindowListener(this);
 	
@@ -231,29 +234,104 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			toggleButton.setSelected(false);
 		    }
 		    player = new Player(currentFile.getAbsolutePath());
+		  
 		}
 	    }
 	});
-
+	
+	class PlayThread extends Thread{
+		public static final int RUNNING =1;
+		public static final int STOPIT = 2;
+		public int threadState = STOPIT;
+		
+		PlayThread playthread;
+		
+		public void setState(int threadState){
+			this.threadState = threadState;
+		}
+		
+		public void run(){
+			//System.out.print("entry slider active thread\n");
+			//System.out.print(threadState+"\n");
+			while (threadState == RUNNING)
+			{
+				//System.out.print(threadState+"\n");
+				if (threadState ==STOPIT){
+					//System.out.print("stophere\n");
+					break;
+				}
+			
+				try{
+					sleep(100);
+				}catch(InterruptedException e){
+					//System.out.print("exception\n");
+					throw new RuntimeException(e);
+				}
+				//System.out.print("skipsleep");
+				double totaltime = player.getTotaltime();
+				double currenttime = player.returnCurrentTimeProperty();
+				if ((totaltime-currenttime)<0.01 &&
+						(totaltime-currenttime)>-0.01 )
+					break;
+				//System.out.print("did not finish\n");
+				slider.setValue((int)(player.returnCurrentTimeProperty()*2000/player.getTotaltime()));
+				//System.out.print("bottom");
+			}
+			//System.out.print("end of slider acitve thread\n");
+		}
+		public void ThreadStart(){
+			playthread = new PlayThread();
+			playthread.setState(RUNNING);
+			//System.out.print("start slider active thread\n");
+			playthread.start();
+		}
+		public void ThreadDelete(){
+			playthread.setState(STOPIT);
+			//System.out.print("stop slider active thread\n");
+		}
+	}
+	
+	PlayThread sliderActive = new PlayThread();
+	
+	slider.addMouseListener(new MouseAdapter(){
+		public void mousePressed(MouseEvent e){
+			sliderActive.ThreadDelete();
+		}
+	});
+	
+	slider.addMouseListener(new MouseAdapter(){
+		public void mouseReleased(MouseEvent e){
+			//sliderActive.ThreadDelete();
+			player.setCrrenttime(slider.getValue()*player.getTotaltime()/2000);			
+			sliderActive.ThreadStart();
+		}
+	});
+	
+	
+	
 	toggleButton.addItemListener(new ItemListener() {
 	    public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 		    if (player != null) {
 			player.resume();
+			sliderActive.ThreadStart();
 		    } else {
 			if (currentFile != null) {
 			    player = new Player(currentFile.getAbsolutePath());
 			    player.play();
+			    sliderActive.ThreadStart();
 			}
 		    }
 		} else {
 		    if (player != null) {
 			player.pause();
+			sliderActive.ThreadDelete();
 		    }
 		}
 	    }
 	});
     }
+    
 
 	public JTable getJt() {
 		return jt;
@@ -371,8 +449,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		// TODO Auto-generated method stub
 		
 	}
+	
+ 
 
 }
-
-
-
