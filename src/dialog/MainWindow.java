@@ -7,6 +7,7 @@ import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.event.MouseAdapter;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -28,12 +29,17 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.MenuKeyListener;
 import javax.swing.table.TableCellRenderer;
 
+
 import javafx.beans.InvalidationListener;
+
+
+
 import javafx.embed.swing.JFXPanel;
 import javafx.scene.media.MediaPlayer;
 import list.FileList;
 import list.MusicList;
 import list.MyJPanel;
+
 import model.Music;
 import model.Model;
 import root.Player;
@@ -51,7 +57,6 @@ import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 
 import java.awt.event.ItemListener;
-import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -74,6 +79,12 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	private JTable jt;
 	private Model model;
 
+
+
+
+	final JSlider volumeSlider;
+	private JSlider slider;
+	private JButton btnNewButton,btnNewButton_2;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,25 +117,27 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	JPanel panelSlider = new JPanel();
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
+
     
 	JSlider slider = new JSlider();
 	slider.setMaximum(2000);
 	slider.setValue(0);
 	panelSlider.add(slider);
+
     
-	
-	
-	
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
 
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
 
-	JButton btnNewButton = new JButton("");
+	btnNewButton = new JButton("");
 	btnNewButton.setBackground(Color.WHITE);
 	btnNewButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward.png")));
 	panelPlayButtons.add(btnNewButton);
+	btnNewButton.addMouseListener(this);
+
+	
 
 	final JToggleButton toggleButton = new JToggleButton("");
 	toggleButton.setBackground(Color.WHITE);
@@ -132,17 +145,18 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	toggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
 	panelPlayButtons.add(toggleButton);
 
-	JButton btnNewButton_2 = new JButton("");
+	btnNewButton_2 = new JButton("");
 	btnNewButton_2.setBackground(Color.WHITE);
 	btnNewButton_2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
 	panelPlayButtons.add(btnNewButton_2);
+	btnNewButton_2.addMouseListener(this);
 
 	JButton btnNewButton_3 = new JButton("");
 	btnNewButton_3.setBackground(Color.WHITE);
 	btnNewButton_3.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
 	panelPlayButtons.add(btnNewButton_3);
 
-	final JSlider volumeSlider = new JSlider();
+    volumeSlider = new JSlider();
 	volumeSlider.setPreferredSize(new Dimension(150, 22));
 	// volumeSlider.setOpaque(false);
 	volumeSlider.setMaximum(150);
@@ -173,10 +187,10 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	panelMainCenter.setLayout(new GridLayout(1, 0, 0, 0));
 	
 	
-    showMusicList = new JPanel[list.getList().size()];
-    for (int i = 0; i < list.getList().size(); i++) {
+    showMusicList = new JPanel[MusicList.getList().size()];
+    for (int i = 0; i < MusicList.getList().size(); i++) {
 		
-		Music music=list.getList().get(i);
+		Music music=MusicList.getList().get(i);
 		
 		JPanel jPanel=new MyJPanel(music);
 		
@@ -188,8 +202,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		showMusicList[i]=jPanel;
 		jPanel.addMouseListener(this);		
 		jPanel.add(jLabel);
-		panelMainCenter.add(jPanel);		
+		panelMainCenter.add(jPanel);	
 	 }
+   
     model = new Model();
     jt = new JTable(model){
     	  public Component prepareRenderer(TableCellRenderer renderer,
@@ -344,16 +359,67 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	@Override
 	public void mouseClicked(MouseEvent e) {
 		// TODO Auto-generated method stub
-		int i=1;
 		MusicList ls = new MusicList();
-		player = new Player(ls.getList().get(jt.getSelectedRow()).getPath());
-		if(i/2 != 0){
-			player.play();
-			i++;
-		}else{
-			player.stop();
+		int musicNumber = jt.getSelectedRow();
+		//show list
+		if(e.getSource() == jt){
+		System.out.println("change color");
+		player = new Player(ls.getList().get(musicNumber).getPath());
+		int i =1;
+		if (i/2 != 0)
+		   {
+			   player.play();
+			}else{
+				player.stop();
+			}
+		System.out.println(ls.getList().get(musicNumber).getPath() + musicNumber );
 		}
+		//previous
+		if(e.getSource() == btnNewButton){
+			if(musicNumber == 0){
+				player.play();
+			}else{
+				if (musicNumber==1) {
+					jt.setRowSelectionInterval(0,0);
+				}else{
+					jt.setRowSelectionInterval(musicNumber-2, musicNumber-1);
+				}
+		   
+			if(player != null && player.isPlaying()){
+				 player.pause();
+				 player = new Player(ls.getList().get(musicNumber-1).getPath());
+				 player.play();
+			}else{
+				player = new Player(ls.getList().get(musicNumber-1).getPath());
+				player.play();
+			}
+			}
+			
+			
+		}
+	
+		if(e.getSource() == btnNewButton_2){
+			
+			if(musicNumber == (jt.getRowCount()-1)){
+				player.play();
+			}else{
+				
+			jt.setRowSelectionInterval(musicNumber, musicNumber+1);
+		   
+			if(player != null && player.isPlaying()){
+				 player.pause();
+				 player = new Player(ls.getList().get(musicNumber+1).getPath());
+				 player.play();
+			}else{
+				player = new Player(ls.getList().get(musicNumber+1).getPath());
+				player.play();
+			}
+			}
+		}
+		
 	}
+
+	
 
 	@Override
 	public void mousePressed(MouseEvent e) {
@@ -449,7 +515,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		// TODO Auto-generated method stub
 		
 	}
-	
+
  
+
 
 }
