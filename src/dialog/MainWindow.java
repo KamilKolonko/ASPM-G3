@@ -1,6 +1,7 @@
 package dialog;
 
 import java.awt.BorderLayout;
+
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Container;
@@ -76,7 +77,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	private JScrollPane jsp;
 	private JTable jt;
 	private Model model;
-
 	final JSlider volumeSlider;
 	private JSlider slider;
 	private JButton btnNewButton, btnNewButton_2;
@@ -84,7 +84,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	public MainWindow() {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 538, 377);
+		setBounds(100, 100, 616, 377);
 		new JFXPanel();
 
 		JMenuBar menuBar = new JMenuBar();
@@ -124,6 +124,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 		Component horizontalGlue = Box.createHorizontalGlue();
 		panelPlayButtons.add(horizontalGlue);
+		
+		JLabel currentTime = new JLabel("00:00:00");
+		panelPlayButtons.add(currentTime);
 
 		btnNewButton = new JButton("");
 		btnNewButton.setBackground(Color.WHITE);
@@ -167,6 +170,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			}
 
 		});
+		
+		JLabel totalTime = new JLabel("00:00:00");
+		panelPlayButtons.add(totalTime);
 
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
 		panelPlayButtons.add(horizontalGlue_1);
@@ -282,6 +288,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 					if ((totaltime - currenttime) < 0.01 && (totaltime - currenttime) > -0.01)
 						break;
 					// System.out.print("did not finish\n");
+					currentTime.setText(player.getActualTime());
+					totalTime.setText(player.getTotalTime());
 					slider.setValue((int) (player.returnCurrentTimeProperty() * 2000 / player.getTotaltime()));
 					// System.out.print("bottom");
 				}
