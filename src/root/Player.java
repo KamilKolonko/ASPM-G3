@@ -114,7 +114,6 @@ public class Player {
 	} else {
 	    return null;
 	}
-	
     }
     
     public void setVolume(double d){
@@ -124,6 +123,4 @@ public class Player {
     public double getVolume(){
     	return mediaPlayer.getVolume();
     }
-
-
 }
