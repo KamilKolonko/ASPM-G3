@@ -125,7 +125,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		Component horizontalGlue = Box.createHorizontalGlue();
 		panelPlayButtons.add(horizontalGlue);
 		
-		JLabel currentTime = new JLabel("00:00:00");
+		final JLabel currentTime = new JLabel("00:00:00");
 		panelPlayButtons.add(currentTime);
 
 		btnNewButton = new JButton("");
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 		});
 		
-		JLabel totalTime = new JLabel("00:00:00");
+		final JLabel totalTime = new JLabel("00:00:00");
 		panelPlayButtons.add(totalTime);
 
 		Component horizontalGlue_1 = Box.createHorizontalGlue();
