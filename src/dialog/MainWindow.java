@@ -50,6 +50,8 @@ import list.MyJPanel;
 import model.Model;
 import model.Music;
 import root.Player;
+import javax.swing.GroupLayout;
+import javax.swing.GroupLayout.Alignment;
 
 public class MainWindow extends JFrame implements MouseListener, WindowListener {
 
@@ -64,7 +66,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     private Model model;
     final JSlider volumeSlider;
     private JSlider slider;
-    private JButton btnNewButton, btnNewButton_2;
+    private JButton btnBackwards, btnForwards;
     private JTextField lyricsTextField;
 
     public MainWindow() {
@@ -113,28 +115,37 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	final JLabel currentTime = new JLabel("00:00:00");
 	panelPlayButtons.add(currentTime);
 
-	btnNewButton = new JButton("");
-	btnNewButton.setBackground(Color.WHITE);
-	btnNewButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
-	panelPlayButtons.add(btnNewButton);
-	btnNewButton.addMouseListener(this);
+	JLabel labelSlash = new JLabel("/");
+	panelPlayButtons.add(labelSlash);
 
-	final JToggleButton toggleButton = new JToggleButton("");
-	toggleButton.setBackground(Color.WHITE);
-	toggleButton.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
-	toggleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
-	panelPlayButtons.add(toggleButton);
+	final JLabel totalTime = new JLabel("00:00:00");
+	panelPlayButtons.add(totalTime);
 
-	btnNewButton_2 = new JButton("");
-	btnNewButton_2.setBackground(Color.WHITE);
-	btnNewButton_2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
-	panelPlayButtons.add(btnNewButton_2);
-	btnNewButton_2.addMouseListener(this);
+	btnBackwards = new JButton("");
+	btnBackwards.setBackground(Color.WHITE);
+	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
+	panelPlayButtons.add(btnBackwards);
+	btnBackwards.addMouseListener(this);
 
-	JButton btnNewButton_3 = new JButton("");
-	btnNewButton_3.setBackground(Color.WHITE);
-	btnNewButton_3.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
-	panelPlayButtons.add(btnNewButton_3);
+	final JToggleButton btnPlayPause = new JToggleButton("");
+	btnPlayPause.setBackground(Color.WHITE);
+	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
+	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
+	panelPlayButtons.add(btnPlayPause);
+
+	btnForwards = new JButton("");
+	btnForwards.setBackground(Color.WHITE);
+	btnForwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
+	panelPlayButtons.add(btnForwards);
+	btnForwards.addMouseListener(this);
+
+	JLabel lblVolume = new JLabel("");
+	lblVolume.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
+	panelPlayButtons.add(lblVolume);
+
+	JPanel panelVolumeSlider = new JPanel();
+	panelPlayButtons.add(panelVolumeSlider);
+	panelVolumeSlider.setLayout(new BorderLayout(0, 0));
 
 	volumeSlider = new JSlider();
 	volumeSlider.setPreferredSize(new Dimension(150, 22));
@@ -145,7 +156,10 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	volumeSlider.setToolTipText("change volume");
 	// volumeSlider.setUI(new VolumeSliderUI());
 	volumeSlider.setPaintTicks(true);
-	panelPlayButtons.add(volumeSlider);
+	panelVolumeSlider.add(volumeSlider);
+
+	Component verticalStrut = Box.createVerticalStrut(10);
+	panelVolumeSlider.add(verticalStrut, BorderLayout.NORTH);
 	volumeSlider.addChangeListener(new ChangeListener() {
 	    @Override
 	    public void stateChanged(ChangeEvent e) {
@@ -156,9 +170,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	});
 
-	final JLabel totalTime = new JLabel("00:00:00");
-	panelPlayButtons.add(totalTime);
-
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
 
@@ -167,21 +178,13 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
-	jt = new JTable(model) {
-	    public Component prepareRenderer(TableCellRenderer renderer, int row, int column) {
-		Component c = super.prepareRenderer(renderer, row, column);
-		if (c instanceof JComponent) {
-		    ((JComponent) c).setOpaque(false);
-		}
-		return c;
-	    }
-	};
+	jt = new JTable(model);
 	jt.setOpaque(false);
 
 	jt.setRowHeight(30);
 	jt.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	jt.setShowHorizontalLines(false);
-	jt.setSelectionBackground(new Color(226, 41, 34));
+	jt.setSelectionBackground(Color.LIGHT_GRAY);
 	jt.addMouseListener(this);
 	panelMainCenter.setLayout(new BorderLayout(0, 0));
 	jsp = new JScrollPane(jt);
@@ -232,7 +235,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		    // lblFileName.setText(currentFile.getName());
 		    if (player != null && player.isPlaying()) {
 			player.stop();
-			toggleButton.setSelected(false);
+			btnPlayPause.setSelected(false);
 		    }
 		    player = new Player(currentFile.getAbsolutePath());
 
@@ -321,7 +324,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	});
 	mnFile.add(mntmLoadLyrics);
 
-	toggleButton.addItemListener(new ItemListener() {
+	btnPlayPause.addItemListener(new ItemListener() {
 	    public void itemStateChanged(ItemEvent e) {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 		    if (player != null) {
@@ -370,7 +373,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	    System.out.println(ls.getList().get(musicNumber).getPath() + musicNumber);
 	}
 	// previous
-	if (e.getSource() == btnNewButton) {
+	if (e.getSource() == btnBackwards) {
 	    if (musicNumber == 0) {
 		player.play();
 	    } else {
@@ -392,7 +395,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	}
 
-	if (e.getSource() == btnNewButton_2) {
+	if (e.getSource() == btnForwards) {
 
 	    if (musicNumber == (jt.getRowCount() - 1)) {
 		player.play();

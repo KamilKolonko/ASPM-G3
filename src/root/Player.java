@@ -51,7 +51,6 @@ public class Player {
     	  formateador.format(segundos);
     	  
     	  cad=formateador.format(horas)+":"+formateador.format(minutos)+":"+formateador.format(segundos);
-    	  System.out.println("ACTUAL" +cad);
     	  return cad;
     	  
     	 }
