@@ -115,7 +115,7 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	btnNewButton = new JButton("");
 	btnNewButton.setBackground(Color.WHITE);
-	btnNewButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward.png")));
+	btnNewButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
 	panelPlayButtons.add(btnNewButton);
 	btnNewButton.addMouseListener(this);
 
