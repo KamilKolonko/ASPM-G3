@@ -1,125 +1,83 @@
 package root;
 
 import java.io.File;
-import java.text.DecimalFormat;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
 
-
 public class Player {
-    
+
     private MediaPlayer mediaPlayer;
     private Media file;
 
-    
-    public Player(String filePath){
-	file = new Media(new File(filePath).toURI().toString());
+    public Player(String mediaFile) {
+	file = new Media(new File(mediaFile).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
-    
-    }
-    public double returnCurrentTimeProperty()
-    {
-    	return mediaPlayer.getCurrentTime().toMillis();
     }
 
-    public MediaPlayer returnMediaPlayer(){
-		return mediaPlayer;
-    	
+    /*
+     * Returns current playback time of media file in milliseconds.
+     */
+    public double getCurrentTime() {
+	return mediaPlayer.getCurrentTime().toMillis();
     }
-	
-    public double synchronizeSliderValue(){
-    	return mediaPlayer.getCurrentTime().toMillis()/mediaPlayer.getTotalDuration().toMillis()*2000;
-    }
-     
-    public double getTotaltime() {
-    	return mediaPlayer.getTotalDuration().toMillis();	
-    }
-    
-    public String getActualTime(){
-    	  String cad="";
-    	  int horas= (int) mediaPlayer.getCurrentTime().toHours();
-    	  
-    	  int minutos=(int) mediaPlayer.getCurrentTime().toMinutes()-(horas*60);
-    	  int segundos = (int) mediaPlayer.getCurrentTime().toSeconds()-((horas*60*60)+(minutos*60));
 
-    	  DecimalFormat formateador = new DecimalFormat("00");
-    	  formateador.format(horas);
-    	  formateador.format(minutos);
-    	  formateador.format(segundos);
-    	  
-    	  cad=formateador.format(horas)+":"+formateador.format(minutos)+":"+formateador.format(segundos);
-    	  return cad;
-    	  
-    	 }
-    	  
-    	 public String getTotalTime(){
-    	  String cad=" ";
-    	  
-    	  int horas= (int) mediaPlayer.getTotalDuration().toHours();
-    	  int minutos=(int) mediaPlayer.getTotalDuration().toMinutes()-(horas*60);
-    	  int segundos = (int) mediaPlayer.getTotalDuration().toSeconds()-((horas*60*60)+(minutos*60));
-    	 
-    	  DecimalFormat formateador = new DecimalFormat("00");
-    	  formateador.format(horas);
-    	  formateador.format(minutos);
-    	  formateador.format(segundos);
-    	  
-    	  cad=formateador.format(horas)+":"+formateador.format(minutos)+":"+formateador.format(segundos);
-    	  
-    	  return cad;
-    	 }
-        
-    public void setCrrenttime(double changeTime) {
-    	mediaPlayer.seek(Duration.millis(changeTime));
-    	
+    /*
+     * Returns total duration time of media file in milliseconds.
+     */
+    public double getTotalTime() {
+	return mediaPlayer.getTotalDuration().toMillis();
     }
-    
-    public void play(){
+
+    public void setCurrentTime(double value) {
+	mediaPlayer.seek(Duration.millis(value));
+    }
+
+    public void play() {
 	mediaPlayer.play();
     }
-    
-    public void play(String filePath){
-	file = new Media(new File(filePath).toURI().toString());
+
+    public void play(String mediaFile) {
+	file = new Media(new File(mediaFile).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
 	play();
     }
-    
-    public boolean isPlaying(){
-	if(mediaPlayer != null){
+
+    public boolean isPlaying() {
+	if (mediaPlayer != null) {
 	    return mediaPlayer.getStatus().equals(Status.PLAYING);
 	} else {
 	    return false;
 	}
     }
-    
-    public void stop(){
+
+    public void stop() {
 	mediaPlayer.stop();
     }
-    
-    public void pause(){
+
+    public void pause() {
 	mediaPlayer.pause();
     }
-    
-    public void resume(){
+
+    public void resume() {
 	mediaPlayer.play();
     }
-    
-    public String getCurrentFile(){
-	if(file != null){
+
+    public String getCurrentFile() {
+	if (file != null) {
 	    return file.getSource();
 	} else {
 	    return null;
 	}
     }
-    
-    public void setVolume(double d){
-    	mediaPlayer.setVolume(d);
+
+    public void setVolume(double value) {
+	mediaPlayer.setVolume(value);
     }
-    
-    public double getVolume(){
-    	return mediaPlayer.getVolume();
+
+    public double getVolume() {
+	return mediaPlayer.getVolume();
     }
 }

@@ -41,6 +41,7 @@ import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.TableCellRenderer;
 
 import javafx.embed.swing.JFXPanel;
@@ -50,6 +51,8 @@ import list.MyJPanel;
 import model.Model;
 import model.Music;
 import root.Player;
+import utillities.FormatUtils;
+
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 
@@ -101,10 +104,10 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
 
-	final JSlider slider = new JSlider();
-	slider.setMaximum(2000);
-	slider.setValue(0);
-	panelSlider.add(slider);
+	final JSlider sliderSongProgress = new JSlider();
+	sliderSongProgress.setMaximum(2000);
+	sliderSongProgress.setValue(0);
+	panelSlider.add(sliderSongProgress);
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
@@ -112,14 +115,14 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
 
-	final JLabel currentTime = new JLabel("00:00:00");
-	panelPlayButtons.add(currentTime);
+	final JLabel labelCurrentTime = new JLabel("00:00:00");
+	panelPlayButtons.add(labelCurrentTime);
 
 	JLabel labelSlash = new JLabel("/");
 	panelPlayButtons.add(labelSlash);
 
-	final JLabel totalTime = new JLabel("00:00:00");
-	panelPlayButtons.add(totalTime);
+	final JLabel labelTotalTime = new JLabel("00:00:00");
+	panelPlayButtons.add(labelTotalTime);
 
 	btnBackwards = new JButton("");
 	btnBackwards.setBackground(Color.WHITE);
@@ -229,6 +232,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		//fc.setMultiSelectionEnabled(true);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
+		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(contentPane);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
 		    currentFile = fc.getSelectedFile();
@@ -270,18 +276,18 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			// System.out.print("exception\n");
 			throw new RuntimeException(e);
 		    }
-		    // System.out.print("skipsleep");
-		    double totaltime = player.getTotaltime();
-		    double currenttime = player.returnCurrentTimeProperty();
-		    if ((totaltime - currenttime) < 0.01 && (totaltime - currenttime) > -0.01)
+		    
+		    double totalTime = player.getTotalTime();
+		    double currentTime = player.getCurrentTime();
+		    //update time slider
+		    if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
 			break;
-		    // System.out.print("did not finish\n");
-		    currentTime.setText(player.getActualTime());
-		    totalTime.setText(player.getTotalTime());
-		    slider.setValue((int) (player.returnCurrentTimeProperty() * 2000 / player.getTotaltime()));
-		    // System.out.print("bottom");
+		    sliderSongProgress.setValue((int) (currentTime/totalTime * sliderSongProgress.getMaximum()));
+		    
+		    //update time labels
+		    labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
+		    labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
 		}
-		// System.out.print("end of slider acitve thread\n");
 	    }
 
 	    public void ThreadStart() {
@@ -299,16 +305,16 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	final PlayThread sliderActive = new PlayThread();
 
-	slider.addMouseListener(new MouseAdapter() {
+	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent e) {
 		sliderActive.ThreadDelete();
 	    }
 	});
 
-	slider.addMouseListener(new MouseAdapter() {
+	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mouseReleased(MouseEvent e) {
 		// sliderActive.ThreadDelete();
-		player.setCrrenttime(slider.getValue() * player.getTotaltime() / 2000);
+		player.setCurrentTime(sliderSongProgress.getValue() * player.getTotalTime() / sliderSongProgress.getMaximum());
 		sliderActive.ThreadStart();
 	    }
 	});
