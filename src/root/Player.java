@@ -1,6 +1,7 @@
 package root;
 
 import java.io.File;
+import java.text.DecimalFormat;
 
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
@@ -36,6 +37,40 @@ public class Player {
     public double getTotaltime() {
     	return mediaPlayer.getTotalDuration().toMillis();	
     }
+    
+    public String getActualTime(){
+    	  String cad="";
+    	  int horas= (int) mediaPlayer.getCurrentTime().toHours();
+    	  
+    	  int minutos=(int) mediaPlayer.getCurrentTime().toMinutes()-(horas*60);
+    	  int segundos = (int) mediaPlayer.getCurrentTime().toSeconds()-((horas*60*60)+(minutos*60));
+
+    	  DecimalFormat formateador = new DecimalFormat("00");
+    	  formateador.format(horas);
+    	  formateador.format(minutos);
+    	  formateador.format(segundos);
+    	  
+    	  cad=formateador.format(horas)+":"+formateador.format(minutos)+":"+formateador.format(segundos);
+    	  return cad;
+    	  
+    	 }
+    	  
+    	 public String getTotalTime(){
+    	  String cad=" ";
+    	  
+    	  int horas= (int) mediaPlayer.getTotalDuration().toHours();
+    	  int minutos=(int) mediaPlayer.getTotalDuration().toMinutes()-(horas*60);
+    	  int segundos = (int) mediaPlayer.getTotalDuration().toSeconds()-((horas*60*60)+(minutos*60));
+    	 
+    	  DecimalFormat formateador = new DecimalFormat("00");
+    	  formateador.format(horas);
+    	  formateador.format(minutos);
+    	  formateador.format(segundos);
+    	  
+    	  cad=formateador.format(horas)+":"+formateador.format(minutos)+":"+formateador.format(segundos);
+    	  
+    	  return cad;
+    	 }
         
     public void setCrrenttime(double changeTime) {
     	mediaPlayer.seek(Duration.millis(changeTime));
@@ -78,7 +113,6 @@ public class Player {
 	} else {
 	    return null;
 	}
-	
     }
     
     public void setVolume(double d){
@@ -88,6 +122,4 @@ public class Player {
     public double getVolume(){
     	return mediaPlayer.getVolume();
     }
-
-
 }
