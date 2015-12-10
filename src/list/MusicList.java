@@ -10,7 +10,6 @@ final public class MusicList {
 
     static {
 	if (list == null) {
-	    System.out.println("create list");
 	    list = new ArrayList<Music>();
 	}
     }
@@ -25,5 +24,9 @@ final public class MusicList {
 
     public static Music get(int id) {
 	return list.get(id);
+    }
+    
+    public static int getSize(){
+	return list.size();
     }
 }

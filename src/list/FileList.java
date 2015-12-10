@@ -35,27 +35,24 @@ public class FileList {
 	try {
 	    new FileOutputStream(path).write(new String("").getBytes());
 	} catch (Exception e) {
-	    // TODO: handle exception
 	    System.out.println("clear" + e.getMessage());
 	}
 
     }
 
-    public static void readFileByLines(String fileName) {
-
-	File file = new File(fileName);
+    public static void readFileByLines(String filePath) {
 	BufferedReader reader = null;
 	try {
-	    reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
+	    reader = new BufferedReader(new InputStreamReader(new FileInputStream(filePath), "UTF-8"));
 
-	    String tempString = null;
+	    String line = null;
 	    ArrayList<Music> list = MusicList.getList();
-	    while ((tempString = reader.readLine()) != null) {
-		String[] s = tempString.split(",");
+	    while ((line = reader.readLine()) != null) {
+		String[] s = line.split(",");
 		Music music = new Music();
 		music.setId(s[0]);// id
 		music.setName(s[1]);// name
-		music.setPath(s[2]);// path way
+		music.setPath(s[2]);// path
 		list.add(music);
 	    }
 	    reader.close();

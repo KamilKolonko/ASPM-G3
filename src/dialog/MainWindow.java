@@ -23,7 +23,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -42,7 +41,6 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableCellRenderer;
 
 import javafx.embed.swing.JFXPanel;
 import list.FileList;
@@ -53,19 +51,16 @@ import model.Music;
 import root.Player;
 import utillities.FormatUtils;
 
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-
 public class MainWindow extends JFrame implements MouseListener, WindowListener {
 
     private JPanel contentPane;
     final JFileChooser fc = new JFileChooser();
-    private File currentFile;
+    private File[] selectedFiles;
     private Player player;
     private MusicList list;
     private JPanel[] showMusicList;
     private JScrollPane jsp;
-    private JTable jt;
+    private JTable tableMusicList;
     private Model model;
     final JSlider volumeSlider;
     private JSlider slider;
@@ -181,16 +176,16 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
-	jt = new JTable(model);
-	jt.setOpaque(false);
+	tableMusicList = new JTable(model);
+	tableMusicList.setOpaque(false);
 
-	jt.setRowHeight(30);
-	jt.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	jt.setShowHorizontalLines(false);
-	jt.setSelectionBackground(Color.LIGHT_GRAY);
-	jt.addMouseListener(this);
+	tableMusicList.setRowHeight(30);
+	tableMusicList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableMusicList.setShowHorizontalLines(false);
+	tableMusicList.setSelectionBackground(Color.LIGHT_GRAY);
+	tableMusicList.addMouseListener(this);
 	panelMainCenter.setLayout(new BorderLayout(0, 0));
-	jsp = new JScrollPane(jt);
+	jsp = new JScrollPane(tableMusicList);
 	panelMainCenter.add(jsp);
 	jsp.setOpaque(false);
 
@@ -232,19 +227,18 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		//fc.setMultiSelectionEnabled(true);
+		fc.setMultiSelectionEnabled(true);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
 		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(contentPane);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-		    currentFile = fc.getSelectedFile();
-		    // lblFileName.setText(currentFile.getName());
-		    if (player != null && player.isPlaying()) {
-			player.stop();
-			btnPlayPause.setSelected(false);
-		    }
-		    player = new Player(currentFile.getAbsolutePath());
-
+		    selectedFiles = fc.getSelectedFiles();
+		    ArrayList<Music> list = MusicList.getList();
+		    list.addAll(FormatUtils.toMusicList(selectedFiles));
+		    Model model = (Model) tableMusicList.getModel();
+		    model.refresh();
+		    model.fireTableDataChanged();
+		    tableMusicList.repaint();
 		}
 	    }
 	});
@@ -276,15 +270,15 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			// System.out.print("exception\n");
 			throw new RuntimeException(e);
 		    }
-		    
+
 		    double totalTime = player.getTotalTime();
 		    double currentTime = player.getCurrentTime();
-		    //update time slider
+		    // update time slider
 		    if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
 			break;
-		    sliderSongProgress.setValue((int) (currentTime/totalTime * sliderSongProgress.getMaximum()));
-		    
-		    //update time labels
+		    sliderSongProgress.setValue((int) (currentTime / totalTime * sliderSongProgress.getMaximum()));
+
+		    // update time labels
 		    labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
 		    labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
 		}
@@ -314,7 +308,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mouseReleased(MouseEvent e) {
 		// sliderActive.ThreadDelete();
-		player.setCurrentTime(sliderSongProgress.getValue() * player.getTotalTime() / sliderSongProgress.getMaximum());
+		player.setCurrentTime(
+			sliderSongProgress.getValue() * player.getTotalTime() / sliderSongProgress.getMaximum());
 		sliderActive.ThreadStart();
 	    }
 	});
@@ -337,10 +332,16 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			player.resume();
 			sliderActive.ThreadStart();
 		    } else {
-			if (currentFile != null) {
-			    player = new Player(currentFile.getAbsolutePath());
-			    player.play();
-			    sliderActive.ThreadStart();
+			if (tableMusicList.getSelectedRowCount() > 0) {
+			    ArrayList list = MusicList.getList();
+			    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
+			} else {
+			    if (MusicList.getSize() > 0) {
+				player = new Player(MusicList.get(0).getPath());
+				tableMusicList.setRowSelectionInterval(0, 0);
+				player.play();
+				sliderActive.ThreadStart();
+			    }
 			}
 		    }
 		} else {
@@ -354,20 +355,19 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     }
 
     public JTable getJt() {
-	return jt;
+	return tableMusicList;
     }
 
     public void setJt(JTable jt) {
-	this.jt = jt;
+	this.tableMusicList = jt;
     }
 
     @Override
     public void mouseClicked(MouseEvent e) {
-	// TODO Auto-generated method stub
 	MusicList ls = new MusicList();
-	int musicNumber = jt.getSelectedRow();
+	int musicNumber = tableMusicList.getSelectedRow();
 	// show list
-	if (e.getSource() == jt) {
+	if (e.getSource() == tableMusicList) {
 	    System.out.println("change color");
 	    player = new Player(ls.getList().get(musicNumber).getPath());
 	    int i = 1;
@@ -384,9 +384,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		player.play();
 	    } else {
 		if (musicNumber == 1) {
-		    jt.setRowSelectionInterval(0, 0);
+		    tableMusicList.setRowSelectionInterval(0, 0);
 		} else {
-		    jt.setRowSelectionInterval(musicNumber - 2, musicNumber - 1);
+		    tableMusicList.setRowSelectionInterval(musicNumber - 2, musicNumber - 1);
 		}
 
 		if (player != null && player.isPlaying()) {
@@ -403,11 +403,11 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	if (e.getSource() == btnForwards) {
 
-	    if (musicNumber == (jt.getRowCount() - 1)) {
+	    if (musicNumber == (tableMusicList.getRowCount() - 1)) {
 		player.play();
 	    } else {
 
-		jt.setRowSelectionInterval(musicNumber, musicNumber + 1);
+		tableMusicList.setRowSelectionInterval(musicNumber, musicNumber + 1);
 
 		if (player != null && player.isPlaying()) {
 		    player.pause();
@@ -423,56 +423,23 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
     public void windowOpened(WindowEvent e) {
-	// TODO Auto-generated method stub
-	System.out.println("open");
-
 	File file = new File("file/musiclist.txt");
 
 	if (file.exists() == false) {
 	    try {
+		file.getParentFile().mkdirs();
 		file.createNewFile();
 	    } catch (IOException e1) {
-		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	    }
-	} else {
-
-	    FileList.readFileByLines("file/musiclist.txt");
-	    jt.setModel(new Model());
 	}
-
+	FileList.readFileByLines(file.getPath());
+	tableMusicList.setModel(new Model());
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-	// TODO Auto-generated method stub
-	System.out.println("close");
-
 	if (MusicList.getList().size() != 0) {
 	    System.out.println("write");
 	    // clean
@@ -482,37 +449,59 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		FileList.writeFile("file/musiclist.txt",
 			list.get(i).getId() + "," + list.get(i).getName() + "," + list.get(i).getPath() + "\n");
 	    }
-
 	}
-
     }
 
     @Override
-    public void windowClosed(WindowEvent e) {
+    public void windowActivated(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowIconified(WindowEvent e) {
+    public void windowClosed(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e) {
+    public void windowDeactivated(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowActivated(WindowEvent e) {
+    public void windowDeiconified(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e) {
+    public void windowIconified(WindowEvent arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent arg0) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent arg0) {
 	// TODO Auto-generated method stub
 
     }

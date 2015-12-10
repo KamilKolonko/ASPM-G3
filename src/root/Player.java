@@ -12,11 +12,21 @@ public class Player {
     private MediaPlayer mediaPlayer;
     private Media file;
 
-    public Player(String mediaFile) {
-	file = new Media(new File(mediaFile).toURI().toString());
+    public Player(String mediaFilePath) {
+	file = new Media(new File(mediaFilePath).toURI().toString());
 	mediaPlayer = new MediaPlayer(file);
     }
 
+    public void play() {
+	mediaPlayer.play();
+    }
+
+    public void play(String mediaFilePath) {
+	file = new Media(new File(mediaFilePath).toURI().toString());
+	mediaPlayer = new MediaPlayer(file);
+	play();
+    }
+    
     /*
      * Returns current playback time of media file in milliseconds.
      */
@@ -33,16 +43,6 @@ public class Player {
 
     public void setCurrentTime(double value) {
 	mediaPlayer.seek(Duration.millis(value));
-    }
-
-    public void play() {
-	mediaPlayer.play();
-    }
-
-    public void play(String mediaFile) {
-	file = new Media(new File(mediaFile).toURI().toString());
-	mediaPlayer = new MediaPlayer(file);
-	play();
     }
 
     public boolean isPlaying() {

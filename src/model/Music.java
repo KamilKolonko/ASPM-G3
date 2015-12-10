@@ -7,6 +7,13 @@ public class Music {
     private String author;
     private String path;
     private String length;
+    
+    public Music(){};
+
+    public Music(String name, String path) {
+	this.name = name;
+	this.path = path;
+    }
 
     public String getId() {
 	return id;
