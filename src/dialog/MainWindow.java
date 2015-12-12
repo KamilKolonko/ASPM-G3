@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -51,6 +50,10 @@ import java.awt.Toolkit;
 
 public class MainWindow extends JFrame implements WindowListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     final JFileChooser fc = new JFileChooser();
     private File[] selectedFiles;
@@ -222,13 +225,13 @@ public class MainWindow extends JFrame implements WindowListener {
 		}
 	    }
 
-	    public void ThreadStart() {
+	    public void threadStart() {
 		playthread = new PlayThread();
 		playthread.setState(RUNNING);
 		playthread.start();
 	    }
 
-	    public void ThreadDelete() {
+	    public void threadStop() {
 		playthread.setState(STOPIT);
 	    }
 	}
@@ -263,7 +266,7 @@ public class MainWindow extends JFrame implements WindowListener {
 
 	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent e) {
-		sliderActive.ThreadDelete();
+		sliderActive.threadStop();
 	    }
 	});
 
@@ -272,7 +275,7 @@ public class MainWindow extends JFrame implements WindowListener {
 		// sliderActive.ThreadDelete();
 		player.setCurrentTime(
 			sliderSongProgress.getValue() * player.getTotalTime() / sliderSongProgress.getMaximum());
-		sliderActive.ThreadStart();
+		sliderActive.threadStart();
 	    }
 	});
 
@@ -291,25 +294,25 @@ public class MainWindow extends JFrame implements WindowListener {
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 		    if (player != null) {
 			player.resume();
-			sliderActive.ThreadStart();
+			sliderActive.threadStart();
 		    } else {
 			if (tableMusicList.getSelectedRowCount() > 0) {
 			    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
 			    player.play();
-			    sliderActive.ThreadStart();
+			    sliderActive.threadStart();
 			} else {
 			    if (MusicList.getSize() > 0) {
 				player = new Player(MusicList.get(0).getPath());
 				tableMusicList.setRowSelectionInterval(0, 0);
 				player.play();
-				sliderActive.ThreadStart();
+				sliderActive.threadStart();
 			    }
 			}
 		    }
 		} else {
 		    if (player != null) {
 			player.pause();
-			sliderActive.ThreadDelete();
+			sliderActive.threadStop();
 		    }
 		}
 	    }
@@ -365,11 +368,9 @@ public class MainWindow extends JFrame implements WindowListener {
 		if (me.getClickCount() == 2) {
 		    if (player != null) {
 			player.stop();
-			sliderActive.ThreadDelete();
+			sliderActive.threadStop();
 		    }
 		    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
-		    player.play();
-		    sliderActive.ThreadStart();
 		    btnPlayPause.setSelected(true);
 		}
 	    }
