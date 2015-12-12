@@ -38,5 +38,4 @@ public class Music {
     public void setPath(String path) {
 	this.path = path;
     }
-
 }

@@ -37,4 +37,8 @@ public class FormatUtils {
 	}
 	return result;
     }
+    
+    public static Music toMusic(File file) {
+	return new Music(file.getName(),file.getPath());
+    }
 }

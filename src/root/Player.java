@@ -6,15 +6,21 @@ import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaPlayer.Status;
 import javafx.util.Duration;
+import model.Music;
+import utillities.FormatUtils;
 
 public class Player {
 
     private MediaPlayer mediaPlayer;
     private Media file;
+    private Music music;
 
     public Player(String mediaFilePath) {
-	file = new Media(new File(mediaFilePath).toURI().toString());
-	mediaPlayer = new MediaPlayer(file);
+	File file = new File(mediaFilePath);
+	music = FormatUtils.toMusic(file);
+	this.file = new Media(file.toURI().toString());
+	mediaPlayer = new MediaPlayer(this.file);
+	// initializeEventHandlers();
     }
 
     public void play() {
@@ -27,6 +33,10 @@ public class Player {
 	play();
     }
     
+    public void reset(){
+	mediaPlayer.seek(Duration.millis(0));
+    }
+
     /*
      * Returns current playback time of media file in milliseconds.
      */
@@ -67,7 +77,7 @@ public class Player {
 
     public String getCurrentFile() {
 	if (file != null) {
-	    return file.getSource();
+	    return music.getName();
 	} else {
 	    return null;
 	}
@@ -80,4 +90,11 @@ public class Player {
     public double getVolume() {
 	return mediaPlayer.getVolume();
     }
+
+    /*
+     * public void initializeEventHandlers() { mediaPlayer.setOnEndOfMedia(new
+     * Runnable() {
+     * 
+     * @Override public void run() { mediaPlayer.stop(); } }); }
+     */
 }

@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -44,9 +45,9 @@ import list.FileList;
 import list.MusicList;
 import model.Model;
 import model.Music;
+import model.PlayModeEnum;
 import root.Player;
 import utillities.FormatUtils;
-import java.awt.Toolkit;
 
 public class MainWindow extends JFrame implements WindowListener {
 
@@ -62,8 +63,14 @@ public class MainWindow extends JFrame implements WindowListener {
     private JTable tableMusicList;
     private Model model;
     final JSlider volumeSlider;
+    final JSlider sliderSongProgress;
     private JButton btnBackwards, btnForwards;
     private JTextField lyricsTextField;
+    public PlayModeEnum playMode;
+    final JLabel labelCurrentTime;
+    final JLabel labelTotalTime;
+    final PlayThread sliderActive;
+    final JToggleButton btnPlayPause;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -99,10 +106,12 @@ public class MainWindow extends JFrame implements WindowListener {
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
 
-	final JSlider sliderSongProgress = new JSlider();
+	sliderSongProgress = new JSlider();
 	sliderSongProgress.setMaximum(2000);
 	sliderSongProgress.setValue(0);
 	panelSlider.add(sliderSongProgress);
+
+	playMode = PlayModeEnum.SEQUENTIAL;
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
@@ -110,13 +119,13 @@ public class MainWindow extends JFrame implements WindowListener {
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
 
-	final JLabel labelCurrentTime = new JLabel("00:00:00");
+	labelCurrentTime = new JLabel("00:00:00");
 	panelPlayButtons.add(labelCurrentTime);
 
 	JLabel labelSlash = new JLabel("/");
 	panelPlayButtons.add(labelSlash);
 
-	final JLabel labelTotalTime = new JLabel("00:00:00");
+	labelTotalTime = new JLabel("00:00:00");
 	panelPlayButtons.add(labelTotalTime);
 
 	btnBackwards = new JButton("");
@@ -124,7 +133,7 @@ public class MainWindow extends JFrame implements WindowListener {
 	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
 	panelPlayButtons.add(btnBackwards);
 
-	final JToggleButton btnPlayPause = new JToggleButton("");
+	btnPlayPause = new JToggleButton("");
 	btnPlayPause.setBackground(Color.WHITE);
 	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
 	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
@@ -191,51 +200,7 @@ public class MainWindow extends JFrame implements WindowListener {
 	this.setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/icons/connected10.png")));
 	this.setTitle("Music player");
 
-	class PlayThread extends Thread {
-	    public static final int RUNNING = 1;
-	    public static final int STOPIT = 2;
-	    public int threadState = STOPIT;
-
-	    PlayThread playthread;
-
-	    public void setState(int threadState) {
-		this.threadState = threadState;
-	    }
-
-	    public void run() {
-		while (threadState == RUNNING) {
-		    if (threadState == STOPIT) {
-			break;
-		    }
-		    try {
-			sleep(100);
-		    } catch (InterruptedException e) {
-			throw new RuntimeException(e);
-		    }
-
-		    double totalTime = player.getTotalTime();
-		    double currentTime = player.getCurrentTime();
-		    // update time slider
-		    if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
-			break;
-		    sliderSongProgress.setValue((int) (currentTime / totalTime * sliderSongProgress.getMaximum()));
-		    // update time labels
-		    labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
-		    labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
-		}
-	    }
-
-	    public void threadStart() {
-		playthread = new PlayThread();
-		playthread.setState(RUNNING);
-		playthread.start();
-	    }
-
-	    public void threadStop() {
-		playthread.setState(STOPIT);
-	    }
-	}
-	final PlayThread sliderActive = new PlayThread();
+	sliderActive = new PlayThread();
 
 	volumeSlider.addChangeListener(new ChangeListener() {
 	    @Override
@@ -371,10 +336,101 @@ public class MainWindow extends JFrame implements WindowListener {
 			sliderActive.threadStop();
 		    }
 		    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
+		    if (btnPlayPause.isSelected() == true)
+			btnPlayPause.setSelected(false);
 		    btnPlayPause.setSelected(true);
 		}
 	    }
 	});
+    }
+
+    class PlayThread extends Thread {
+	public static final int RUNNING = 1;
+	public static final int STOPIT = 2;
+	public int threadState = STOPIT;
+
+	PlayThread playthread;
+
+	public void setState(int threadState) {
+	    this.threadState = threadState;
+	}
+
+	public void run() {
+	    while (threadState == RUNNING) {
+		if (threadState == STOPIT) {
+		    break;
+		}
+		try {
+		    sleep(100);
+		} catch (InterruptedException e) {
+		    throw new RuntimeException(e);
+		}
+
+		double totalTime = player.getTotalTime();
+		double currentTime = player.getCurrentTime();
+		if (totalTime == currentTime) {
+		    player.stop();
+		    nextSong(this);
+		    break;
+		}
+		// update time slider
+		if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
+		    break;
+		sliderSongProgress.setValue((int) (currentTime / totalTime * sliderSongProgress.getMaximum()));
+		// update time labels
+		labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
+		labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
+	    }
+	}
+
+	public void threadStart() {
+	    playthread = new PlayThread();
+	    playthread.setState(RUNNING);
+	    playthread.start();
+	}
+
+	public void threadStop() {
+	    playthread.setState(STOPIT);
+	}
+    }
+
+    private void nextSong(PlayThread play) {
+	sliderSongProgress.setValue(sliderSongProgress.getMinimum());
+	int currentSongListId = 0;
+	for (int i = 0; i < MusicList.getList().size(); i++) {
+	    if (MusicList.getList().get(i).getName().equals(player.getCurrentFile())) {
+		currentSongListId = i;
+	    }
+	}
+
+	switch (playMode) {
+	case SEQUENTIAL:
+	    player.stop();
+	    if (currentSongListId + 1 < MusicList.getSize()) {
+		player = new Player(MusicList.getList().get(currentSongListId + 1).getPath());
+		player.play();
+		sliderActive.threadStart();
+	    } else {
+		btnPlayPause.setSelected(false);
+	    }
+	    break;
+	case LOOP:
+	    player.stop();
+	    if (currentSongListId + 1 < MusicList.getSize()) {
+		currentSongListId++;
+	    } else {
+		currentSongListId = 0;
+	    }
+	    player = new Player(MusicList.getList().get(currentSongListId + 1).getPath());
+	    player.play();
+	    sliderActive.threadStart();
+	    break;
+	case SINGLE:
+	    player.reset();
+	    player.play();
+	    sliderActive.threadStart();
+	    break;
+	}
     }
 
     @Override
