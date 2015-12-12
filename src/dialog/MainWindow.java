@@ -6,6 +6,7 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -158,15 +159,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	Component verticalStrut = Box.createVerticalStrut(10);
 	panelVolumeSlider.add(verticalStrut, BorderLayout.NORTH);
-	volumeSlider.addChangeListener(new ChangeListener() {
-	    @Override
-	    public void stateChanged(ChangeEvent e) {
-		if (player != null) {
-		    player.setVolume((double) volumeSlider.getValue() / volumeSlider.getMaximum());
-		}
-	    }
-
-	});
 
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
@@ -215,15 +207,23 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	    panelMainCenter.add(jPanel);
 	}
 
-	model = new Model();
+	// model = new Model();
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.addWindowListener(this);
 
 	Image image = this.getToolkit().getImage("/icons/connected10.png");
-
 	this.setIconImage(image);
-
 	this.setTitle("music player");
+
+	volumeSlider.addChangeListener(new ChangeListener() {
+	    @Override
+	    public void stateChanged(ChangeEvent e) {
+		if (player != null) {
+		    player.setVolume((double) volumeSlider.getValue() / volumeSlider.getMaximum());
+		}
+	    }
+
+	});
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
@@ -255,19 +255,13 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	    }
 
 	    public void run() {
-		// System.out.print("entry slider active thread\n");
-		// System.out.print(threadState+"\n");
 		while (threadState == RUNNING) {
-		    // System.out.print(threadState+"\n");
 		    if (threadState == STOPIT) {
-			// System.out.print("stophere\n");
 			break;
 		    }
-
 		    try {
 			sleep(100);
 		    } catch (InterruptedException e) {
-			// System.out.print("exception\n");
 			throw new RuntimeException(e);
 		    }
 
@@ -277,7 +271,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		    if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
 			break;
 		    sliderSongProgress.setValue((int) (currentTime / totalTime * sliderSongProgress.getMaximum()));
-
 		    // update time labels
 		    labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
 		    labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
@@ -333,8 +326,9 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 			sliderActive.ThreadStart();
 		    } else {
 			if (tableMusicList.getSelectedRowCount() > 0) {
-			    ArrayList list = MusicList.getList();
 			    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
+			    player.play();
+			    sliderActive.ThreadStart();
 			} else {
 			    if (MusicList.getSize() > 0) {
 				player = new Player(MusicList.get(0).getPath());
@@ -354,30 +348,19 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	});
     }
 
-    public JTable getJt() {
-	return tableMusicList;
-    }
-
-    public void setJt(JTable jt) {
-	this.tableMusicList = jt;
-    }
-
     @Override
     public void mouseClicked(MouseEvent e) {
 	MusicList ls = new MusicList();
 	int musicNumber = tableMusicList.getSelectedRow();
 	// show list
-	if (e.getSource() == tableMusicList) {
-	    System.out.println("change color");
-	    player = new Player(ls.getList().get(musicNumber).getPath());
-	    int i = 1;
-	    if (i / 2 != 0) {
-		player.play();
-	    } else {
-		player.stop();
-	    }
-	    System.out.println(ls.getList().get(musicNumber).getPath() + musicNumber);
-	}
+	/*
+	 * if (e.getSource() == tableMusicList) { System.out.println(
+	 * "change color"); player = new
+	 * Player(ls.getList().get(musicNumber).getPath()); int i = 1; if (i / 2
+	 * != 0) { player.play(); } else { player.stop(); }
+	 * System.out.println(ls.getList().get(musicNumber).getPath() +
+	 * musicNumber); }
+	 */
 	// previous
 	if (e.getSource() == btnBackwards) {
 	    if (musicNumber == 0) {
@@ -441,8 +424,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     @Override
     public void windowClosing(WindowEvent e) {
 	if (MusicList.getList().size() != 0) {
-	    System.out.println("write");
-	    // clean
 	    FileList.clear("file/musiclist.txt");
 	    ArrayList<Music> list = MusicList.getList();
 	    for (int i = 0; i < list.size(); i++) {
@@ -495,9 +476,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
     }
 
     @Override
-    public void mousePressed(MouseEvent arg0) {
-	// TODO Auto-generated method stub
-
+    public void mousePressed(MouseEvent me) {
+	
     }
 
     @Override
