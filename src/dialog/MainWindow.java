@@ -1,22 +1,17 @@
 package dialog;
 
-
-
-
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
-import java.awt.Image;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.File;
@@ -27,7 +22,6 @@ import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -41,37 +35,43 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.TableCellRenderer;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import javafx.embed.swing.JFXPanel;
 import list.FileList;
 import list.MusicList;
-import list.MyJPanel;
 import model.Model;
 import model.Music;
+import model.PlayModeEnum;
 import root.Player;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
+import sun.security.krb5.internal.SeqNumber;
+import utillities.FormatUtils;
 
-public class MainWindow extends JFrame implements MouseListener, WindowListener {
+public class MainWindow extends JFrame implements WindowListener {
 
+    /**
+     * 
+     */
+    private static final long serialVersionUID = 1L;
     private JPanel contentPane;
     final JFileChooser fc = new JFileChooser();
-    private File currentFile;
+    private File[] selectedFiles;
     private Player player;
-    private MusicList list;
-    private JPanel[] showMusicList;
     private JScrollPane jsp;
-    private JTable jt;
+    private JTable tableMusicList;
     private Model model;
     final JSlider volumeSlider;
-    private JSlider slider;
+    final JSlider sliderSongProgress;
     private JButton btnBackwards, btnForwards;
     private JTextField lyricsTextField;
+    public PlayModeEnum playMode;
+    final JLabel labelCurrentTime;
+    final JLabel labelTotalTime;
+    final PlayThread sliderActive;
+    final JToggleButton btnPlayPause;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -97,6 +97,8 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	setContentPane(contentPane);
 	contentPane.setLayout(new BorderLayout(0, 0));
 
+	JMenuItem mntmLoadLyrics = new JMenuItem("Load lyrics");
+
 	JPanel panelPlayer = new JPanel();
 	contentPane.add(panelPlayer, BorderLayout.SOUTH);
 	panelPlayer.setLayout(new BoxLayout(panelPlayer, BoxLayout.Y_AXIS));
@@ -105,33 +107,111 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	panelPlayer.add(panelSlider);
 	panelSlider.setLayout(new GridLayout(0, 1, 0, 0));
 
-	final JSlider slider = new JSlider();
-	slider.setMaximum(2000);
-	slider.setValue(0);
-	panelSlider.add(slider);
+	sliderSongProgress = new JSlider();
+	sliderSongProgress.setMaximum(2000);
+	sliderSongProgress.setValue(0);
+	panelSlider.add(sliderSongProgress);
+
+	playMode = PlayModeEnum.SEQUENTIAL;
 
 	JPanel panelPlayButtons = new JPanel();
 	panelPlayer.add(panelPlayButtons);
 
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
+	
+	//Adding buttons for different playmodes
+	JButton seqButton = new JButton("");
+	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+	seqButton.setSelected(true);
+	seqButton.setPreferredSize(new Dimension(18,18));
+	JButton singleButton = new JButton("");
+	singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+	singleButton.setSelected(false);
+	singleButton.setPreferredSize(new Dimension(18,18));
+	JButton loopButton = new JButton("");
+	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+	loopButton.setSelected(false);
+	loopButton.setPreferredSize(new Dimension(18,18));
+	
+	//provides functionality for sequential playmode
+	seqButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(seqButton.isSelected() == false){
+				if(loopButton.isSelected() == true){
+					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+					loopButton.setSelected(false);
+				}
+				if(singleButton.isSelected() == true){
+					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+					singleButton.setSelected(false);
+				}
+				
+				seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+				playMode = PlayModeEnum.SEQUENTIAL;
+				seqButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(seqButton);
+	
+	//provides functionality for single playmode	
+	singleButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(singleButton.isSelected() == false){
+				if(loopButton.isSelected() == true){
+					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+					loopButton.setSelected(false);
+				}
+				if(seqButton.isSelected() == true){
+					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+					seqButton.setSelected(false);
+				}
+				singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
+				playMode = PlayModeEnum.SINGLE;
+				singleButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(singleButton);
+	//provides functionality for looped playmode	
+	loopButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(loopButton.isSelected() == false){
+				if(singleButton.isSelected() == true){
+					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+					singleButton.setSelected(false);
+				}
+				if(seqButton.isSelected() == true){
+					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+					seqButton.setSelected(false);
+				}
+				loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
+				playMode = PlayModeEnum.LOOP;
+				loopButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(loopButton);
 
-	final JLabel currentTime = new JLabel("00:00:00");
-	panelPlayButtons.add(currentTime);
+	labelCurrentTime = new JLabel("00:00:00");
+	panelPlayButtons.add(labelCurrentTime);
 
 	JLabel labelSlash = new JLabel("/");
 	panelPlayButtons.add(labelSlash);
 
-	final JLabel totalTime = new JLabel("00:00:00");
-	panelPlayButtons.add(totalTime);
+	labelTotalTime = new JLabel("00:00:00");
+	panelPlayButtons.add(labelTotalTime);
 
 	btnBackwards = new JButton("");
 	btnBackwards.setBackground(Color.WHITE);
 	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
 	panelPlayButtons.add(btnBackwards);
-	btnBackwards.addMouseListener(this);
 
-	final JToggleButton btnPlayPause = new JToggleButton("");
+	btnPlayPause = new JToggleButton("");
 	btnPlayPause.setBackground(Color.WHITE);
 	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
 	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
@@ -141,7 +221,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	btnForwards.setBackground(Color.WHITE);
 	btnForwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
 	panelPlayButtons.add(btnForwards);
-	btnForwards.addMouseListener(this);
 
 	JLabel lblVolume = new JLabel("");
 	lblVolume.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
@@ -164,15 +243,6 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	Component verticalStrut = Box.createVerticalStrut(10);
 	panelVolumeSlider.add(verticalStrut, BorderLayout.NORTH);
-	volumeSlider.addChangeListener(new ChangeListener() {
-	    @Override
-	    public void stateChanged(ChangeEvent e) {
-		if (player != null) {
-		    player.setVolume((double) volumeSlider.getValue() / volumeSlider.getMaximum());
-		}
-	    }
-
-	});
 
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
@@ -182,16 +252,15 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
-	jt = new JTable(model);
-	jt.setOpaque(false);
+	tableMusicList = new JTable(model);
+	tableMusicList.setOpaque(false);
 
-	jt.setRowHeight(30);
-	jt.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-	jt.setShowHorizontalLines(false);
-	jt.setSelectionBackground(Color.LIGHT_GRAY);
-	jt.addMouseListener(this);
+	tableMusicList.setRowHeight(30);
+	tableMusicList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableMusicList.setShowHorizontalLines(false);
+	tableMusicList.setSelectionBackground(Color.LIGHT_GRAY);
 	panelMainCenter.setLayout(new BorderLayout(0, 0));
-	jsp = new JScrollPane(jt);
+	jsp = new JScrollPane(tableMusicList);
 	panelMainCenter.add(jsp);
 	jsp.setOpaque(false);
 
@@ -204,120 +273,55 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 	lyricsTextField.setColumns(40);
 	jsp.getViewport().setOpaque(false);
 
-	showMusicList = new JPanel[MusicList.getList().size()];
-	for (int i = 0; i < MusicList.getList().size(); i++) {
-
-	    Music music = MusicList.getList().get(i);
-
-	    JPanel jPanel = new MyJPanel(music);
-
-	    JLabel jLabel = new JLabel(music.getName(), SwingConstants.CENTER);
-	    jLabel.setSize(300, 10);
-	    jLabel.setHorizontalTextPosition(JLabel.CENTER);
-	    jPanel.setBackground(Color.WHITE);
-	    showMusicList[i] = jPanel;
-	    jPanel.addMouseListener(this);
-	    jPanel.add(jLabel);
-	    panelMainCenter.add(jPanel);
-	}
-
-	model = new Model();
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.addWindowListener(this);
+	this.setIconImage(Toolkit.getDefaultToolkit().getImage(MainWindow.class.getResource("/icons/connected10.png")));
+	this.setTitle("Music player");
 
-	Image image = this.getToolkit().getImage("/icons/connected10.png");
+	sliderActive = new PlayThread();
 
-	this.setIconImage(image);
-
-	this.setTitle("music player");
+	volumeSlider.addChangeListener(new ChangeListener() {
+	    @Override
+	    public void stateChanged(ChangeEvent e) {
+		if (player != null) {
+		    player.setVolume((double) volumeSlider.getValue() / volumeSlider.getMaximum());
+		}
+	    }
+	});
 
 	mntmOpen.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		fc.setMultiSelectionEnabled(true);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
+		fc.setFileFilter(filter);
 		int returnVal = fc.showOpenDialog(contentPane);
 		if (returnVal == JFileChooser.APPROVE_OPTION) {
-		    currentFile = fc.getSelectedFile();
-		    // lblFileName.setText(currentFile.getName());
-		    if (player != null && player.isPlaying()) {
-			player.stop();
-			btnPlayPause.setSelected(false);
-		    }
-		    player = new Player(currentFile.getAbsolutePath());
-
+		    selectedFiles = fc.getSelectedFiles();
+		    ArrayList<Music> list = MusicList.getList();
+		    list.addAll(FormatUtils.toMusicList(selectedFiles));
+		    Model model = (Model) tableMusicList.getModel();
+		    model.refresh();
+		    model.fireTableDataChanged();
+		    tableMusicList.repaint();
 		}
 	    }
 	});
 
-	class PlayThread extends Thread {
-	    public static final int RUNNING = 1;
-	    public static final int STOPIT = 2;
-	    public int threadState = STOPIT;
-
-	    PlayThread playthread;
-
-	    public void setState(int threadState) {
-		this.threadState = threadState;
-	    }
-
-	    public void run() {
-		// System.out.print("entry slider active thread\n");
-		// System.out.print(threadState+"\n");
-		while (threadState == RUNNING) {
-		    // System.out.print(threadState+"\n");
-		    if (threadState == STOPIT) {
-			// System.out.print("stophere\n");
-			break;
-		    }
-
-		    try {
-			sleep(100);
-		    } catch (InterruptedException e) {
-			// System.out.print("exception\n");
-			throw new RuntimeException(e);
-		    }
-		    // System.out.print("skipsleep");
-		    double totaltime = player.getTotaltime();
-		    double currenttime = player.returnCurrentTimeProperty();
-		    if ((totaltime - currenttime) < 0.01 && (totaltime - currenttime) > -0.01)
-			break;
-		    // System.out.print("did not finish\n");
-		    currentTime.setText(player.getActualTime());
-		    totalTime.setText(player.getTotalTime());
-		    slider.setValue((int) (player.returnCurrentTimeProperty() * 2000 / player.getTotaltime()));
-		    // System.out.print("bottom");
-		}
-		// System.out.print("end of slider acitve thread\n");
-	    }
-
-	    public void ThreadStart() {
-		playthread = new PlayThread();
-		playthread.setState(RUNNING);
-		// System.out.print("start slider active thread\n");
-		playthread.start();
-	    }
-
-	    public void ThreadDelete() {
-		playthread.setState(STOPIT);
-		// System.out.print("stop slider active thread\n");
-	    }
-	}
-
-	final PlayThread sliderActive = new PlayThread();
-
-	slider.addMouseListener(new MouseAdapter() {
+	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent e) {
-		sliderActive.ThreadDelete();
+		sliderActive.threadStop();
 	    }
 	});
 
-	slider.addMouseListener(new MouseAdapter() {
+	sliderSongProgress.addMouseListener(new MouseAdapter() {
 	    public void mouseReleased(MouseEvent e) {
 		// sliderActive.ThreadDelete();
-		player.setCrrenttime(slider.getValue() * player.getTotaltime() / 2000);
-		sliderActive.ThreadStart();
+		player.setCurrentTime(
+			sliderSongProgress.getValue() * player.getTotalTime() / sliderSongProgress.getMaximum());
+		sliderActive.threadStart();
 	    }
 	});
 
-	JMenuItem mntmLoadLyrics = new JMenuItem("Load lyrics");
 	mntmLoadLyrics.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		int returnVal = fc.showOpenDialog(contentPane);
@@ -333,184 +337,234 @@ public class MainWindow extends JFrame implements MouseListener, WindowListener 
 		if (e.getStateChange() == ItemEvent.SELECTED) {
 		    if (player != null) {
 			player.resume();
-			sliderActive.ThreadStart();
+			sliderActive.threadStart();
 		    } else {
-			if (currentFile != null) {
-			    player = new Player(currentFile.getAbsolutePath());
+			if (tableMusicList.getSelectedRowCount() > 0) {
+			    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
 			    player.play();
-			    sliderActive.ThreadStart();
+			    sliderActive.threadStart();
+			} else {
+			    if (MusicList.getSize() > 0) {
+				player = new Player(MusicList.get(0).getPath());
+				tableMusicList.setRowSelectionInterval(0, 0);
+				player.play();
+				sliderActive.threadStart();
+			    }
 			}
 		    }
 		} else {
 		    if (player != null) {
 			player.pause();
-			sliderActive.ThreadDelete();
+			sliderActive.threadStop();
 		    }
+		}
+	    }
+	});
+
+	btnBackwards.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		int musicNumber = tableMusicList.getSelectedRow();
+		if (musicNumber == 0) {
+		    player.play();
+		} else {
+		    if (musicNumber == 1) {
+			tableMusicList.setRowSelectionInterval(0, 0);
+		    } else {
+			tableMusicList.setRowSelectionInterval(musicNumber - 2, musicNumber - 1);
+		    }
+
+		    if (player != null && player.isPlaying()) {
+			player.pause();
+			player = new Player(MusicList.getList().get(musicNumber - 1).getPath());
+			player.play();
+		    } else {
+			player = new Player(MusicList.getList().get(musicNumber - 1).getPath());
+			player.play();
+		    }
+		}
+	    }
+	});
+
+	btnForwards.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		int musicNumber = tableMusicList.getSelectedRow();
+		if (musicNumber == (tableMusicList.getRowCount() - 1)) {
+		    player.play();
+		} else {
+
+		    tableMusicList.setRowSelectionInterval(musicNumber, musicNumber + 1);
+
+		    if (player != null && player.isPlaying()) {
+			player.pause();
+			player = new Player(MusicList.getList().get(musicNumber + 1).getPath());
+			player.play();
+		    } else {
+			player = new Player(MusicList.getList().get(musicNumber + 1).getPath());
+			player.play();
+		    }
+		}
+	    }
+	});
+
+	tableMusicList.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+		    if (player != null) {
+			player.stop();
+			sliderActive.threadStop();
+		    }
+		    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
+		    if (btnPlayPause.isSelected() == true)
+			btnPlayPause.setSelected(false);
+		    btnPlayPause.setSelected(true);
 		}
 	    }
 	});
     }
 
-    public JTable getJt() {
-	return jt;
-    }
+    class PlayThread extends Thread {
+	public static final int RUNNING = 1;
+	public static final int STOPIT = 2;
+	public int threadState = STOPIT;
 
-    public void setJt(JTable jt) {
-	this.jt = jt;
-    }
+	PlayThread playthread;
 
-    @Override
-    public void mouseClicked(MouseEvent e) {
-	// TODO Auto-generated method stub
-	MusicList ls = new MusicList();
-	int musicNumber = jt.getSelectedRow();
-	// show list
-	if (e.getSource() == jt) {
-	    System.out.println("change color");
-	    player = new Player(ls.getList().get(musicNumber).getPath());
-	    int i = 1;
-	    if (i / 2 != 0) {
-		player.play();
-	    } else {
-		player.stop();
-	    }
-	    System.out.println(ls.getList().get(musicNumber).getPath() + musicNumber);
-	}
-	// previous
-	if (e.getSource() == btnBackwards) {
-	    if (musicNumber == 0) {
-		player.play();
-	    } else {
-		if (musicNumber == 1) {
-		    jt.setRowSelectionInterval(0, 0);
-		} else {
-		    jt.setRowSelectionInterval(musicNumber - 2, musicNumber - 1);
-		}
-
-		if (player != null && player.isPlaying()) {
-		    player.pause();
-		    player = new Player(ls.getList().get(musicNumber - 1).getPath());
-		    player.play();
-		} else {
-		    player = new Player(ls.getList().get(musicNumber - 1).getPath());
-		    player.play();
-		}
-	    }
-
+	public void setState(int threadState) {
+	    this.threadState = threadState;
 	}
 
-	if (e.getSource() == btnForwards) {
-
-	    if (musicNumber == (jt.getRowCount() - 1)) {
-		player.play();
-	    } else {
-
-		jt.setRowSelectionInterval(musicNumber, musicNumber + 1);
-
-		if (player != null && player.isPlaying()) {
-		    player.pause();
-		    player = new Player(ls.getList().get(musicNumber + 1).getPath());
-		    player.play();
-		} else {
-		    player = new Player(ls.getList().get(musicNumber + 1).getPath());
-		    player.play();
+	public void run() {
+	    while (threadState == RUNNING) {
+		if (threadState == STOPIT) {
+		    break;
 		}
+		try {
+		    sleep(100);
+		} catch (InterruptedException e) {
+		    throw new RuntimeException(e);
+		}
+
+		double totalTime = player.getTotalTime();
+		double currentTime = player.getCurrentTime();
+		if (totalTime == currentTime) {
+		    player.stop();
+		    nextSong(this);
+		    break;
+		}
+		// update time slider
+		if ((totalTime - currentTime) < 0.01 && (totalTime - currentTime) > -0.01)
+		    break;
+		sliderSongProgress.setValue((int) (currentTime / totalTime * sliderSongProgress.getMaximum()));
+		// update time labels
+		labelCurrentTime.setText(FormatUtils.millisecondsToTime(currentTime));
+		labelTotalTime.setText(FormatUtils.millisecondsToTime(totalTime));
 	    }
 	}
 
+	public void threadStart() {
+	    playthread = new PlayThread();
+	    playthread.setState(RUNNING);
+	    playthread.start();
+	}
+
+	public void threadStop() {
+	    playthread.setState(STOPIT);
+	}
     }
 
-    @Override
-    public void mousePressed(MouseEvent e) {
-	// TODO Auto-generated method stub
+    private void nextSong(PlayThread play) {
+	sliderSongProgress.setValue(sliderSongProgress.getMinimum());
+	int currentSongListId = 0;
+	for (int i = 0; i < MusicList.getList().size(); i++) {
+	    if (MusicList.getList().get(i).getName().equals(player.getCurrentFile())) {
+		currentSongListId = i;
+	    }
+	}
 
-    }
-
-    @Override
-    public void mouseReleased(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseEntered(MouseEvent e) {
-	// TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void mouseExited(MouseEvent e) {
-	// TODO Auto-generated method stub
-
+	switch (playMode) {
+	case SEQUENTIAL:
+	    player.stop();
+	    if (currentSongListId + 1 < MusicList.getSize()) {
+		player = new Player(MusicList.getList().get(currentSongListId + 1).getPath());
+		player.play();
+		sliderActive.threadStart();
+	    } else {
+		btnPlayPause.setSelected(false);
+	    }
+	    break;
+	case LOOP:
+	    player.stop();
+	    if (currentSongListId + 1 < MusicList.getSize()) {
+		currentSongListId++;
+	    } else {
+		currentSongListId = 0;
+	    }
+	    player = new Player(MusicList.getList().get(currentSongListId + 1).getPath());
+	    player.play();
+	    sliderActive.threadStart();
+	    break;
+	case SINGLE:
+	    player.reset();
+	    player.play();
+	    sliderActive.threadStart();
+	    break;
+	}
     }
 
     @Override
     public void windowOpened(WindowEvent e) {
-	// TODO Auto-generated method stub
-	System.out.println("open");
-
 	File file = new File("file/musiclist.txt");
 
 	if (file.exists() == false) {
 	    try {
+		file.getParentFile().mkdirs();
 		file.createNewFile();
 	    } catch (IOException e1) {
-		// TODO Auto-generated catch block
 		e1.printStackTrace();
 	    }
-	} else {
-
-	    FileList.readFileByLines("file/musiclist.txt");
-	    jt.setModel(new Model());
 	}
-
+	FileList.readFileByLines(file.getPath());
+	tableMusicList.setModel(new Model());
     }
 
     @Override
     public void windowClosing(WindowEvent e) {
-	// TODO Auto-generated method stub
-	System.out.println("close");
-
 	if (MusicList.getList().size() != 0) {
-	    System.out.println("write");
-	    // clean
 	    FileList.clear("file/musiclist.txt");
 	    ArrayList<Music> list = MusicList.getList();
 	    for (int i = 0; i < list.size(); i++) {
 		FileList.writeFile("file/musiclist.txt",
 			list.get(i).getId() + "," + list.get(i).getName() + "," + list.get(i).getPath() + "\n");
 	    }
-
 	}
-
     }
 
     @Override
-    public void windowClosed(WindowEvent e) {
+    public void windowActivated(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowIconified(WindowEvent e) {
+    public void windowClosed(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowDeiconified(WindowEvent e) {
+    public void windowDeactivated(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowActivated(WindowEvent e) {
+    public void windowDeiconified(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
 
     @Override
-    public void windowDeactivated(WindowEvent e) {
+    public void windowIconified(WindowEvent arg0) {
 	// TODO Auto-generated method stub
 
     }
