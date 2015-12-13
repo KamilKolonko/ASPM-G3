@@ -47,6 +47,7 @@ import model.Model;
 import model.Music;
 import model.PlayModeEnum;
 import root.Player;
+import sun.security.krb5.internal.SeqNumber;
 import utillities.FormatUtils;
 
 public class MainWindow extends JFrame implements WindowListener {
@@ -118,6 +119,83 @@ public class MainWindow extends JFrame implements WindowListener {
 
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
+	
+	//Adding buttons for different playmodes
+	JButton seqButton = new JButton("");
+	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+	seqButton.setSelected(true);
+	seqButton.setPreferredSize(new Dimension(18,18));
+	JButton singleButton = new JButton("");
+	singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+	singleButton.setSelected(false);
+	singleButton.setPreferredSize(new Dimension(18,18));
+	JButton loopButton = new JButton("");
+	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+	loopButton.setSelected(false);
+	loopButton.setPreferredSize(new Dimension(18,18));
+	
+	//provides functionality for sequential playmode
+	seqButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(seqButton.isSelected() == false){
+				if(loopButton.isSelected() == true){
+					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+					loopButton.setSelected(false);
+				}
+				if(singleButton.isSelected() == true){
+					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+					singleButton.setSelected(false);
+				}
+				
+				seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+				playMode = PlayModeEnum.SEQUENTIAL;
+				seqButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(seqButton);
+	
+	//provides functionality for single playmode	
+	singleButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(singleButton.isSelected() == false){
+				if(loopButton.isSelected() == true){
+					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+					loopButton.setSelected(false);
+				}
+				if(seqButton.isSelected() == true){
+					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+					seqButton.setSelected(false);
+				}
+				singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
+				playMode = PlayModeEnum.SINGLE;
+				singleButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(singleButton);
+	//provides functionality for looped playmode	
+	loopButton.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			if(loopButton.isSelected() == false){
+				if(singleButton.isSelected() == true){
+					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+					singleButton.setSelected(false);
+				}
+				if(seqButton.isSelected() == true){
+					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+					seqButton.setSelected(false);
+				}
+				loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
+				playMode = PlayModeEnum.LOOP;
+				loopButton.setSelected(true);
+			
+			}
+		}
+	});
+	panelPlayButtons.add(loopButton);
 
 	labelCurrentTime = new JLabel("00:00:00");
 	panelPlayButtons.add(labelCurrentTime);
