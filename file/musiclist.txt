@@ -1,3 +1,3 @@
-1,虎口脱险,./file/老狼 - 虎口脱险.mp3
-2,不要说话,./file/陈奕迅 - 不要说话.mp3
-3,南山南,./file/马頔 - 南山南.mp3
+null,Journey ft. CYN_166467585 - Imagined Herbal Flows.mp3,D:\Music\Journey ft. CYN_166467585 - Imagined Herbal Flows.mp3
+null,Keizan - So Lovely_165015992 - Dealer de Musique.mp3,D:\Music\Keizan - So Lovely_165015992 - Dealer de Musique.mp3
+null,Kučka - Divinity (Mazde Remix)_197344846 - Mazde.mp3,D:\Music\Kučka - Divinity (Mazde Remix)_197344846 - Mazde.mp3
