@@ -36,6 +36,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
@@ -92,6 +93,9 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
     private GridBagConstraints createList1,createList2;
     private int y=0;
     private String name;
+    private JPopupMenu pum;
+    private JMenuItem item1;
+    private JMenu del;
 
 
     public MainWindow() {
@@ -110,6 +114,9 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
 	JMenu mnHelp = new JMenu("Help");
 	menuBar.add(mnHelp);
+	
+	JMenu del = new JMenu("Delete");
+	menuBar.add(del);
 
 	JMenuItem mntmAbout = new JMenuItem("About");
 	mnHelp.add(mntmAbout);
@@ -415,6 +422,35 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	
 	JPanel panel = new JPanel();
 	panelMainCenter.add(panel, BorderLayout.SOUTH);
+	
+	//add music
+		pum = new JPopupMenu();
+		item1 = new JMenuItem("add music");   
+		pum.add(item1);
+		tableMusicList.addMouseListener(this);
+		item1.addActionListener(new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				fc.setMultiSelectionEnabled(true);
+				FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
+				fc.setFileFilter(filter);
+				int returnVal = fc.showOpenDialog(contentPane);
+				if (returnVal == JFileChooser.APPROVE_OPTION) {
+				    selectedFiles = fc.getSelectedFiles();
+				    ArrayList<Music> list = MusicList.getList();
+				    list.addAll(FormatUtils.toMusicList(selectedFiles));
+				    Model model = (Model) tableMusicList.getModel();
+				    model.refresh();
+				    model.fireTableDataChanged();
+				    tableMusicList.repaint();
+				}
+			}
+			
+		});
+		
+		//delete music
+		del.addMouseListener(this);
 
 	lyricsTextField = new JTextField();
 	lyricsTextField.setEditable(false);
@@ -554,7 +590,8 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 		}
 	    }
 	});
-
+    
+	
 	tableMusicList.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent me) {
 		if (me.getClickCount() == 2) {
@@ -823,12 +860,29 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			listName.setVisible(true);
 			y++;	
 		}
+		if(e.getSource() == del){
+			if(player.isPlaying()){
+				System.out.println("Cannot delete");
+			}
+			else deleteOneSong();
+		}}
+		
+		 private void deleteOneSong(){
+		    	ArrayList<Music> list = MusicList.getList();
+		    	File file = new File("file/musiclist.txt");	
+		    	int songIndex = tableMusicList.getSelectedRow();
+		    	list.remove(songIndex);
+		    	FileList.readFileByLines(file.getPath());
+		    	tableMusicList.setModel(new Model());
+			    tableMusicList.repaint();
 	}
 
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
-		
+		if(e.getSource() == tableMusicList && e.getButton() == MouseEvent.BUTTON3){
+			pum.show(panelMainCenter, 300, 100);
+		}
 	}
 
 	@Override
