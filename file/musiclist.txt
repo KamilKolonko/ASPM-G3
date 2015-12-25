@@ -1,3 +1,2 @@
-null,Journey ft. CYN_166467585 - Imagined Herbal Flows.mp3,D:\Music\Journey ft. CYN_166467585 - Imagined Herbal Flows.mp3
-null,Keizan - So Lovely_165015992 - Dealer de Musique.mp3,D:\Music\Keizan - So Lovely_165015992 - Dealer de Musique.mp3
-null,Kučka - Divinity (Mazde Remix)_197344846 - Mazde.mp3,D:\Music\Kučka - Divinity (Mazde Remix)_197344846 - Mazde.mp3
+null,Bruno Mars-Runaway Baby.mp3,D:\ruanjianyasuobao\eclipse-dsl-mars-1-win32\workspace\ASPM-G3\file\Bruno Mars-Runaway Baby.mp3
+null,Groove Coverage-She.mp3,D:\ruanjianyasuobao\eclipse-dsl-mars-1-win32\workspace\ASPM-G3\file\Groove Coverage-She.mp3

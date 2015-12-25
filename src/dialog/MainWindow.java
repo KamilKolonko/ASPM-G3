@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -14,10 +15,12 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -39,6 +42,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumnModel;
 
 import javafx.embed.swing.JFXPanel;
 import list.FileList;
@@ -75,7 +80,7 @@ public class MainWindow extends JFrame implements WindowListener {
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 616, 377);
+	setBounds(100, 100, 800, 377);
 	new JFXPanel();
 
 	JMenuBar menuBar = new JMenuBar();
@@ -121,80 +126,81 @@ public class MainWindow extends JFrame implements WindowListener {
 	panelPlayButtons.add(horizontalGlue);
 	
 	//Adding buttons for different playmodes
-	JButton seqButton = new JButton("");
-	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
-	seqButton.setSelected(true);
-	seqButton.setPreferredSize(new Dimension(18,18));
-	JButton singleButton = new JButton("");
-	singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-	singleButton.setSelected(false);
-	singleButton.setPreferredSize(new Dimension(18,18));
-	JButton loopButton = new JButton("");
-	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
-	loopButton.setSelected(false);
-	loopButton.setPreferredSize(new Dimension(18,18));
-	
-	//provides functionality for sequential playmode
-	seqButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(seqButton.isSelected() == false){
-				if(loopButton.isSelected() == true){
-					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
-					loopButton.setSelected(false);
-				}
-				if(singleButton.isSelected() == true){
-					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-					singleButton.setSelected(false);
-				}
+	//Adding buttons for different playmodes
+		JButton seqButton = new JButton("");
+		seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+		seqButton.setSelected(true);
+		seqButton.setPreferredSize(new Dimension(18,18));
+		JButton singleButton = new JButton("");
+		singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+		singleButton.setSelected(false);
+		singleButton.setPreferredSize(new Dimension(18,18));
+		JButton loopButton = new JButton("");
+		loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+		loopButton.setSelected(false);
+		loopButton.setPreferredSize(new Dimension(18,18));
+		
+		//provides functionality for sequential playmode
+		seqButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(seqButton.isSelected() == false){
+					if(loopButton.isSelected() == true){
+						loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+						loopButton.setSelected(false);
+					}
+					if(singleButton.isSelected() == true){
+						singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+						singleButton.setSelected(false);
+					}
+					
+					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+					playMode = PlayModeEnum.SEQUENTIAL;
+					seqButton.setSelected(true);
 				
-				seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
-				playMode = PlayModeEnum.SEQUENTIAL;
-				seqButton.setSelected(true);
-			
+				}
 			}
-		}
-	});
-	panelPlayButtons.add(seqButton);
-	
-	//provides functionality for single playmode	
-	singleButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(singleButton.isSelected() == false){
-				if(loopButton.isSelected() == true){
-					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
-					loopButton.setSelected(false);
+		});
+		panelPlayButtons.add(seqButton);
+		
+		//provides functionality for single playmode	
+		singleButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(singleButton.isSelected() == false){
+					if(loopButton.isSelected() == true){
+						loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+						loopButton.setSelected(false);
+					}
+					if(seqButton.isSelected() == true){
+						seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+						seqButton.setSelected(false);
+					}
+					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
+					playMode = PlayModeEnum.SINGLE;
+					singleButton.setSelected(true);
+				
 				}
-				if(seqButton.isSelected() == true){
-					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
-					seqButton.setSelected(false);
-				}
-				singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
-				playMode = PlayModeEnum.SINGLE;
-				singleButton.setSelected(true);
-			
 			}
-		}
-	});
-	panelPlayButtons.add(singleButton);
-	//provides functionality for looped playmode	
-	loopButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(loopButton.isSelected() == false){
-				if(singleButton.isSelected() == true){
-					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-					singleButton.setSelected(false);
+		});
+		panelPlayButtons.add(singleButton);
+		//provides functionality for looped playmode	
+		loopButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				if(loopButton.isSelected() == false){
+					if(singleButton.isSelected() == true){
+						singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
+						singleButton.setSelected(false);
+					}
+					if(seqButton.isSelected() == true){
+						seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+						seqButton.setSelected(false);
+					}
+					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
+					playMode = PlayModeEnum.LOOP;
+					loopButton.setSelected(true);
+				
 				}
-				if(seqButton.isSelected() == true){
-					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
-					seqButton.setSelected(false);
-				}
-				loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
-				playMode = PlayModeEnum.LOOP;
-				loopButton.setSelected(true);
-			
 			}
-		}
-	});
+		});
 	panelPlayButtons.add(loopButton);
 
 	labelCurrentTime = new JLabel("00:00:00");
@@ -250,15 +256,28 @@ public class MainWindow extends JFrame implements WindowListener {
 	JPanel panelMainLeft = new JPanel();
 	contentPane.add(panelMainLeft, BorderLayout.WEST);
 
+	Star starbutton = new Star(new Dimension(100,20));
+	starbutton.setEnabled(true);
+	starbutton.setPreferredSize(new Dimension(100,20));
+	panelPlayButtons.add(starbutton);
+	
 	JPanel panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
 	tableMusicList = new JTable(model);
 	tableMusicList.setOpaque(false);
-
 	tableMusicList.setRowHeight(30);
 	tableMusicList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	tableMusicList.setShowHorizontalLines(false);
 	tableMusicList.setSelectionBackground(Color.LIGHT_GRAY);
+	//tableMusicList.add(starbutton);
+	//TableColumnModel a = tableMusicList.getColumnModel().getColumn(0).setCellEditor(new StarCellEditor());
+	//tableMusicList.getColumnModel().getColumn(0).setCellRenderer(new CWStarRenderer());
+	//TableColumnModel  model1; //new DefaultTableModel(3,3);
+
+	//JTable table = new JTable(model);
+	//table.getColumnModel().getColumn(1);
+	
+
 	panelMainCenter.setLayout(new BorderLayout(0, 0));
 	jsp = new JScrollPane(tableMusicList);
 	panelMainCenter.add(jsp);

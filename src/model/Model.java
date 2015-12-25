@@ -1,11 +1,13 @@
 package model;
 
+import java.awt.Dimension;
 import java.util.Vector;
 
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import dialog.Star;
 import list.MusicList;
 
 public class Model extends AbstractTableModel {
@@ -20,6 +22,7 @@ public class Model extends AbstractTableModel {
     public Model() {
 	columnNames = new Vector();
 	columnNames.add("Your music list");
+	//columnNames.add("Evaluation");
 
 	rowData = new Vector();
 
@@ -28,6 +31,7 @@ public class Model extends AbstractTableModel {
 	    String num = i < 10 ? "0" + (i + 1) : (i + 1) + "";
 
 	    hang.add(num + "  " + list.getList().get(i).getName());
+	    //hang.add(new Star(new Dimension(100,20)));
 	    rowData.add(hang);
 	}
     }
@@ -55,8 +59,11 @@ public class Model extends AbstractTableModel {
 	    Vector hang = new Vector();
 	    String num = i < 10 ? "0" + (i + 1) : (i + 1) + "";
 
+	   // Object[] objdata = { num + "  " + list.getList().get(i).getName(),new Boolean(false)};
 	    hang.add(num + "  " + list.getList().get(i).getName());
+	   // hang.add(new Boolean(false));
 	    rowData.add(hang);
+	   // rowData.add(objdata);
 	}
     }
 
