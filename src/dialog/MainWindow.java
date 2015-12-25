@@ -94,8 +94,10 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
     private int y=0;
     private String name;
     private JPopupMenu pum;
-    private JMenuItem item1;
+    private JMenuItem item,item1;
     private JMenu del;
+    private  JPopupMenu  pop;
+
 
 
     public MainWindow() {
@@ -404,6 +406,31 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			}
 			
 		});
+		
+		//delete pop window
+	    pop = new JPopupMenu();
+	    item = new JMenuItem("delete list");
+	    pop.add(item);
+	    btnList.addMouseListener(new MouseAdapter(){
+	    	public void mousePressed(MouseEvent e){
+	    		if(e.getSource() == btnList && e.getButton()== MouseEvent.BUTTON3){
+					System.out.println("pop");
+					pop.show(panelLeft,100,100);
+				}
+	    	}
+	    });
+	    item.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				deletelist();
+				tableMusicList.repaint();
+				
+			}
+	    	
+	    });
+
 		
 	Star starbutton = new Star(new Dimension(100,20));
 	starbutton.setEnabled(true);
@@ -812,6 +839,23 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
     	tableMusicList.setModel(new Model());
 	    tableMusicList.repaint();
 }
+    // delete list
+    private void deletelist(){
+    	ArrayList<Music> list = MusicList.getList();
+    	File file = new File("file/musiclist.txt");
+    	System.out.println(list);
+	    if(list.isEmpty() == false){
+	    	for(int i= list.size()-1;i>=0;i--){
+	    		System.out.println(i); 
+	    		list.remove(i);
+	    	}
+	    }
+	    System.out.println(list);
+		FileList.readFileByLines(file.getPath());
+		tableMusicList.setModel(new Model());
+	    tableMusicList.repaint();
+	    
+    }
 
     @Override
     public void windowOpened(WindowEvent e) {
