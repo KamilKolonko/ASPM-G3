@@ -151,3 +151,16 @@ class CWStarRenderer extends JCheckBox implements TableCellRenderer {
 		return this;
 	}
 }
+
+
+
+
+
+
+//tableMusicList.add(starbutton);
+//TableColumnModel a = tableMusicList.getColumnModel().getColumn(0).setCellEditor(new StarCellEditor());
+//tableMusicList.getColumnModel().getColumn(0).setCellRenderer(new CWStarRenderer());
+//TableColumnModel  model1; //new DefaultTableModel(3,3);
+
+//JTable table = new JTable(model);
+//table.getColumnModel().getColumn(1);
