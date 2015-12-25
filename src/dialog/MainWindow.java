@@ -115,7 +115,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	JMenu mnHelp = new JMenu("Help");
 	menuBar.add(mnHelp);
 	
-	JMenu del = new JMenu("Delete");
+	del = new JMenu("Delete");
 	menuBar.add(del);
 
 	JMenuItem mntmAbout = new JMenuItem("About");
@@ -604,7 +604,8 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			player.stop();
 			sliderActive.threadStop();
 		    }
-		    player = new Player(MusicList.get(tableMusicList.getSelectedRow()).getPath());
+
+
 		    if (btnPlayPause.isSelected() == true)
 			btnPlayPause.setSelected(false);
 		    btnPlayPause.setSelected(true);
@@ -623,7 +624,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	public void setState(int threadState) {
 	    this.threadState = threadState;
 	}
-
+   
 	public void run() {
 	    while (threadState == RUNNING) {
 		if (threadState == STOPIT) {
@@ -791,6 +792,27 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 		panelMainCenter.updateUI();
 		panelMainCenter.repaint();
     }
+    private void deleteOneSong(){
+    	ArrayList<Music> list = MusicList.getList();
+    	File file = new File("file/musiclist.txt");	
+    	int songIndex = tableMusicList.getSelectedRow();
+    	
+    	//play,not end
+    	if(player.isPlaying()) {
+    		
+    		player.stop();
+    		player = new Player(MusicList.get(songIndex+1).getPath());
+    		
+    		player.play();
+    		list.remove(songIndex);
+    	}
+    	else list.remove(songIndex);
+    	
+    	FileList.readFileByLines(file.getPath());
+    	tableMusicList.setModel(new Model());
+	    tableMusicList.repaint();
+}
+
     @Override
     public void windowOpened(WindowEvent e) {
 	File file = new File("file/musiclist.txt");
@@ -865,23 +887,14 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			listName.setVisible(true);
 			y++;	
 		}
-		if(e.getSource() == del){
-			if(player.isPlaying()){
-				System.out.println("Cannot delete");
-			}
-			else deleteOneSong();
-		}}
-		
-		 private void deleteOneSong(){
-		    	ArrayList<Music> list = MusicList.getList();
-		    	File file = new File("file/musiclist.txt");	
-		    	int songIndex = tableMusicList.getSelectedRow();
-		    	list.remove(songIndex);
-		    	FileList.readFileByLines(file.getPath());
-		    	tableMusicList.setModel(new Model());
-			    tableMusicList.repaint();
+		if(e.getSource() == del ){
+			
+			 deleteOneSong();
+			
+		}
 	}
-
+		
+		
 	@Override
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub

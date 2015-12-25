@@ -1,8 +1,0 @@
-<<<<<<< HEAD
-null,Bruno Mars-Runaway Baby.mp3,D:\ruanjianyasuobao\eclipse-dsl-mars-1-win32\workspace\ASPM-G3\file\Bruno Mars-Runaway Baby.mp3
-null,Groove Coverage-She.mp3,D:\ruanjianyasuobao\eclipse-dsl-mars-1-win32\workspace\ASPM-G3\file\Groove Coverage-She.mp3
-=======
-null,7妹 - 百思不得7姐.mp3,C:\Users\lixian\Music\7妹 - 百思不得7姐.mp3
-null,A-Lin - Halo (Live).mp3,C:\Users\lixian\Music\A-Lin - Halo (Live).mp3
-null,A-Lin - 爱上你等于爱上寂寞 (Live).mp3,C:\Users\lixian\Music\A-Lin - 爱上你等于爱上寂寞 (Live).mp3
->>>>>>> branch 'master' of https://github.com/KamilKolonko/ASPM-G3
