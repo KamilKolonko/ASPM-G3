@@ -100,7 +100,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 616, 377);
+	setBounds(100, 100, 800, 377);
 	new JFXPanel();
 
 	JMenuBar menuBar = new JMenuBar();
