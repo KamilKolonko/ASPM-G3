@@ -102,7 +102,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-	setBounds(100, 100, 800, 377);
+	setBounds(100, 100, 900, 450);
 	new JFXPanel();
 
 	JMenuBar menuBar = new JMenuBar();
@@ -430,13 +430,20 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			}
 	    	
 	    });
-
-		
+	
+	JLabel Grade = new JLabel("Grade:");
+	panelPlayButtons.add(Grade);
+	
+	//star 	
 	Star starbutton = new Star(new Dimension(100,20));
 	starbutton.setEnabled(true);
 	starbutton.setPreferredSize(new Dimension(100,20));
 	panelPlayButtons.add(starbutton);
-		
+	
+	JButton submitButton = new JButton("submit");
+	panelPlayButtons.add(submitButton);
+	submitButton.setBackground(Color.lightGray);;
+	
 	panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
 	tableMusicList = new JTable(model);
