@@ -1,5 +1,9 @@
 package model;
 
+import javax.swing.ImageIcon;
+
+import dialog.MainWindow;
+
 public class Music {
 
     private String id;
@@ -7,6 +11,7 @@ public class Music {
     private String author;
     private String path;
     private String length;
+    private int favorite;
     
     public Music(){};
 
@@ -38,6 +43,24 @@ public class Music {
     public void setPath(String path) {
 	this.path = path;
     }
+//like=1 dislike=0 
+	public int getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(int favorite) {
+		this.favorite = favorite;
+	}
+
+//	public ImageIcon getHeart() {
+//		return new ImageIcon(MainWindow.class.getResource("/icons/darkheart.png"));
+//	}
+//
+//	public void setHeart(ImageIcon heart) {
+//		this.heart = heart;
+//	}
+    
+    
  
 }
  

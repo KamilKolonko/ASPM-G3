@@ -97,15 +97,15 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
     private JMenuItem item,item1;
     private JMenu del;
     private  JPopupMenu  pop;
-
-
-
+    private JMenuBar menuBar;
+    private boolean b;
+    private int flag;
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setBounds(100, 100, 900, 450);
 	new JFXPanel();
 
-	JMenuBar menuBar = new JMenuBar();
+	menuBar = new JMenuBar();
 	setJMenuBar(menuBar);
 
 	JMenu mnFile = new JMenu("File");
@@ -119,7 +119,14 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	
 	del = new JMenu("Delete");
 	menuBar.add(del);
+	
+	JToggleButton favorite2 = new JToggleButton("");
+	favorite2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/darkheart.png")));
+	favorite2.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/redheart.png")));
+	menuBar.add(favorite2);
+	
 
+	
 	JMenuItem mntmAbout = new JMenuItem("About");
 	mnHelp.add(mntmAbout);
 	contentPane = new JPanel();
@@ -447,6 +454,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
 	tableMusicList = new JTable(model);
+	
 	tableMusicList.setOpaque(false);
 
 	tableMusicList.setRowHeight(30);
@@ -630,7 +638,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	    }
 	});
     
-	
+
 	tableMusicList.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent me) {
 		if (me.getClickCount() == 2) {
@@ -639,11 +647,38 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			sliderActive.threadStop();
 		    }
 
-
 		    if (btnPlayPause.isSelected() == true)
 			btnPlayPause.setSelected(false);
 		    btnPlayPause.setSelected(true);
 		}
+	    }
+	    public void mouseClicked(MouseEvent me){
+	    	int a = MusicList.get(tableMusicList.getSelectedRow()).getFavorite();
+	    	Music m = new Music();
+	    	System.out.println(a );
+	    	if(me.getSource() == tableMusicList){
+	    		favorite2.setSelected(true);
+	    		favorite2.setSelected(false);
+	    		favorite2.addItemListener(new ItemListener(){
+					@Override
+					public void itemStateChanged(ItemEvent e) {
+						// TODO Auto-generated method stub
+						if(e.getStateChange() == ItemEvent.SELECTED){
+							flag=1;
+						}else flag=0;	
+						MusicList.get(tableMusicList.getSelectedRow()).setFavorite(flag);
+					}	
+	    		});
+	    		if(a==1){
+	    			favorite2.setSelected(false);
+		    		favorite2.setSelected(true);
+	    		}else {
+	    			favorite2.setSelected(true);
+		    		favorite2.setSelected(false);
+	    		}
+	    		
+	    	}
+	    	System.out.println(a);
 	    }
 	});
     }
@@ -863,6 +898,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	    tableMusicList.repaint();
 	    
     }
+ 
 
     @Override
     public void windowOpened(WindowEvent e) {
@@ -879,6 +915,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	FileList.readFileByLines(file.getPath());
 	tableMusicList.setModel(new Model());
 	tableMusicList.setVisible(false);
+	Model aa = new Model();
     	
     }
 
@@ -887,9 +924,10 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	if (MusicList.getList().size() != 0) {
 	    FileList.clear("file/musiclist.txt");
 	    ArrayList<Music> list = MusicList.getList();
+	    Music heart = new Music();
 	    for (int i = 0; i < list.size(); i++) {
 		FileList.writeFile("file/musiclist.txt",
-			list.get(i).getId() + "," + list.get(i).getName() + "," + list.get(i).getPath() + "\n");
+			list.get(i).getId() + "," + list.get(i).getName() + "," + list.get(i).getPath() + ","+MusicList.get(i).getFavorite()+"\n");
 	    }
 	}
     }
@@ -940,9 +978,9 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 		}
 		if(e.getSource() == del ){
 			
-			 deleteOneSong();
-			
+			 deleteOneSong();	
 		}
+	
 	}
 		
 		

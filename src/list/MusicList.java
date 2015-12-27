@@ -2,12 +2,14 @@ package list;
 
 import java.util.ArrayList;
 
+import javax.swing.ImageIcon;
+
 import model.Music;
 
 final public class MusicList {
 
     private static ArrayList<Music> list;
-
+    private static Music heart;
     static {
 	if (list == null) {
 	    list = new ArrayList<Music>();
@@ -26,10 +28,10 @@ final public class MusicList {
 	return list.get(id);
     }
     
+   
     public static int getSize(){
 	return list.size();
     }
- 
 }
  
 

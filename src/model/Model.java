@@ -3,10 +3,13 @@ package model;
 import java.awt.Dimension;
 import java.util.Vector;
 
+import javax.swing.ImageIcon;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
+import dialog.MainWindow;
 import dialog.Star;
 import list.MusicList;
 
@@ -16,22 +19,23 @@ public class Model extends AbstractTableModel {
     JTable jt = null;
 
     JScrollPane jsp = null;
-
+  
     private MusicList list;
+    private Music heart;
 
     public Model() {
 	columnNames = new Vector();
 	columnNames.add("Your music list");
-	//columnNames.add("Evaluation");
+    
 
 	rowData = new Vector();
 
 	for (int i = 0; i < list.getList().size(); i++) {
 	    Vector hang = new Vector();
 	    String num = i < 10 ? "0" + (i + 1) : (i + 1) + "";
-
-	    hang.add(num + "  " + list.getList().get(i).getName());
-	    //hang.add(new Star(new Dimension(100,20)));
+       // hang.add(num + "  " + list.getList().get(i).getName()+ list.getList().get(i).getHeart());
+	   hang.add(num + "  " + list.getList().get(i).getName());
+	   
 	    rowData.add(hang);
 	}
     }
