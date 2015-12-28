@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
@@ -108,9 +109,22 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	del = new JMenu("Delete");
 	menuBar.add(del);
 
+	
+	
+	ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/likeOFF.png"));
+	ImageIcon icon2 = new ImageIcon(MainWindow.class.getResource("/icons/like.png"));
+	
+	Image img = icon.getImage(); 
+	Image img3 = img.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon1 = new ImageIcon(img3);
+
+	Image img2 = icon2.getImage();
+	Image img4 = img2.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon3 = new ImageIcon(img4);
+	
 	JToggleButton favorite2 = new JToggleButton("");
-	favorite2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/likeOFF.png")));
-	favorite2.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/like.png")));
+	favorite2.setIcon(icon1);
+	favorite2.setSelectedIcon(icon3);
 	
 	menuBar.add(favorite2);
 
