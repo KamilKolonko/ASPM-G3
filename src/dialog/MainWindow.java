@@ -185,7 +185,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			singleButton.setSelected(false);
 		    }
 
-		    seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeat.png")));
+		    seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/randomON.png")));
 		    playMode = PlayModeEnum.SEQUENTIAL;
 		    seqButton.setSelected(true);
 
@@ -203,7 +203,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			loopButton.setSelected(false);
 		    }
 		    if (seqButton.isSelected() == true) {
-			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/random.jpg")));
+			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/randomON.jpg")));
 			seqButton.setSelected(false);
 		    }
 		    singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
