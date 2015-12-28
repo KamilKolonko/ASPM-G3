@@ -53,7 +53,7 @@ public class FileList {
 		music.setId(s[0]);// id
 		music.setName(s[1]);// name
 		music.setPath(s[2]);// path
-		music.setFavorite(3);//favorite
+		//music.setFavorite(3);//favorite
 		list.add(music);
 	    }
 	    reader.close();
