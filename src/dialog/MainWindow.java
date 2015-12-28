@@ -45,13 +45,16 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.TableColumn;
 
 import javafx.embed.swing.JFXPanel;
 import list.FileList;
 import list.MusicList;
 import model.Model;
 import model.Music;
+import model.MusicPropertiesEnum;
 import model.PlayModeEnum;
+import model.WidgetTableModel;
 import root.Player;
 import utillities.CustomTableConstraints;
 import utillities.FormatUtils;
@@ -64,7 +67,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     private File[] selectedFiles;
     private Player player;
     private JScrollPane playlistPanel, jsp1, artistPanel, genrePanel, albumPanel, yearPanel;
-    private JTable tableMusicList, listTable, tableMusicList1;
+    private JTable tableAlbums, tableMusicList, tableArtists, tableYears, listTable, tableMusicList1;
     private Model model;
     final JSlider volumeSlider, sliderSongProgress;
     private JButton btnYears, btnBackwards, btnForwards, btnArtists, btnList, btnCreate, newListname, btnAlbums;
@@ -445,7 +448,13 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	playlistPanel.setVisible(true);
 	playlistPanel.setOpaque(false);
 
-	artistPanel = new JScrollPane();
+	tableArtists = new JTable(new WidgetTableModel(MusicPropertiesEnum.ARTIST.toString()));
+	tableArtists.setOpaque(false);
+	tableArtists.setRowHeight(30);
+	tableArtists.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableArtists.setShowHorizontalLines(false);
+	tableArtists.setSelectionBackground(Color.LIGHT_GRAY);
+	artistPanel = new JScrollPane(tableArtists);
 	artistPanel.setBounds(0, 0, 674, 269);
 	artistPanel.setVisible(false);
 	panelMainCenter.add(artistPanel);
@@ -457,13 +466,25 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	panelMainCenter.add(genrePanel);
 	genrePanel.setOpaque(false);
 
-	albumPanel = new JScrollPane();
+	tableAlbums = new JTable(new WidgetTableModel(MusicPropertiesEnum.ALBUM.toString()));
+	tableAlbums.setOpaque(false);
+	tableAlbums.setRowHeight(30);
+	tableAlbums.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableAlbums.setShowHorizontalLines(false);
+	tableAlbums.setSelectionBackground(Color.LIGHT_GRAY);
+	albumPanel = new JScrollPane(tableAlbums);
 	albumPanel.setBounds(0, 0, 674, 269);
 	albumPanel.setVisible(false);
 	panelMainCenter.add(albumPanel);
 	albumPanel.setOpaque(false);
 
-	yearPanel = new JScrollPane();
+	tableYears = new JTable(new WidgetTableModel(MusicPropertiesEnum.YEAR.toString()));
+	tableYears.setOpaque(false);
+	tableYears.setRowHeight(30);
+	tableYears.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableYears.setShowHorizontalLines(false);
+	tableYears.setSelectionBackground(Color.LIGHT_GRAY);
+	yearPanel = new JScrollPane(tableYears);
 	yearPanel.setBounds(0, 0, 674, 269);
 	yearPanel.setVisible(false);
 	panelMainCenter.add(yearPanel);
@@ -642,24 +663,30 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	btnArtists.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableArtists.getRowCount() == 0)
+		    tableArtists.setModel(new WidgetTableModel(MusicPropertiesEnum.ARTIST.toString()));
 		artistPanel.setVisible(true);
 		playlistPanel.setVisible(false);
-		artistPanel.setVisible(false);
+		yearPanel.setVisible(false);
 		albumPanel.setVisible(false);
 	    }
 	});
 	
 	btnAlbums.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableAlbums.getRowCount() == 0)
+		    tableAlbums.setModel(new WidgetTableModel(MusicPropertiesEnum.ALBUM.toString()));
 		albumPanel.setVisible(true);
 		playlistPanel.setVisible(false);
 		artistPanel.setVisible(false);
-		albumPanel.setVisible(false);
+		yearPanel.setVisible(false);
 	    }
 	});
 	
 	btnYears.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableYears.getRowCount() == 0)
+		    tableYears.setModel(new WidgetTableModel(MusicPropertiesEnum.YEAR.toString()));
 		yearPanel.setVisible(true);
 		playlistPanel.setVisible(false);
 		artistPanel.setVisible(false);
