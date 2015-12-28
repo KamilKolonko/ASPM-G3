@@ -57,9 +57,6 @@ import utillities.FormatUtils;
 
 public class MainWindow extends JFrame implements WindowListener, MouseListener {
 
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
     private JPanel contentPane, panelLeft, panelList, panelMainCenter;
     final JFileChooser fc = new JFileChooser();
@@ -490,7 +487,6 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	item1.addActionListener(new ActionListener() {
 	    @Override
 	    public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
 		fc.setMultiSelectionEnabled(true);
 		FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
 		fc.setFileFilter(filter);
@@ -667,7 +663,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	    public void mouseClicked(MouseEvent me) {
 		boolean isFavorite = MusicList.get(tableMusicList.getSelectedRow()).getFavorite();
 		Music m = new Music();
-		System.out.println(isFavorite);
+		//System.out.println(isFavorite);
 		if (me.getSource() == tableMusicList) {
 		    favorite2.setSelected(true);
 		    favorite2.setSelected(false);
@@ -691,7 +687,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		    }
 
 		}
-		System.out.println(isFavorite);
+		//System.out.println(isFavorite);
 	    }
 	});
     }
@@ -939,8 +935,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	    ArrayList<Music> list = MusicList.getList();
 	    Music heart = new Music();
 	    for (int i = 0; i < list.size(); i++) {
-		FileList.writeFile("file/musiclist.txt", list.get(i).getId() + "," + list.get(i).getName() + ","
-			+ list.get(i).getPath() + "," + MusicList.get(i).getFavorite() + "\n");
+		FileList.writeFile("file/musiclist.txt", list.get(i).toCommaSeparatedString() + "\n");
 	    }
 	}
     }
