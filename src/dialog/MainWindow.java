@@ -440,9 +440,12 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	starbutton.setPreferredSize(new Dimension(100,20));
 	panelPlayButtons.add(starbutton);
 	
-	JButton submitButton = new JButton("submit");
-	panelPlayButtons.add(submitButton);
-	submitButton.setBackground(Color.lightGray);;
+	starbutton.addMouseListener(new MouseAdapter(){
+    	public void mousePressed(MouseEvent e){
+    		
+    	}
+    });
+ 
 	
 	panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
