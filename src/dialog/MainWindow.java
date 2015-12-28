@@ -106,8 +106,9 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	menuBar.add(del);
 
 	JToggleButton favorite2 = new JToggleButton("");
-	favorite2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/darkheart.png")));
-	favorite2.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/redheart.png")));
+	favorite2.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/likeOFF.png")));
+	favorite2.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/like.png")));
+	
 	menuBar.add(favorite2);
 
 	JMenuItem mntmAbout = new JMenuItem("About");
@@ -142,24 +143,24 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	// Adding buttons for different playmodes
 	JButton seqButton = new JButton("");
-	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeat.png")));
 	seqButton.setSelected(true);
-	seqButton.setPreferredSize(new Dimension(18, 18));
+	//seqButton.setPreferredSize(new Dimension(18, 18));
 	JButton singleButton = new JButton("");
 	singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
 	singleButton.setSelected(false);
-	singleButton.setPreferredSize(new Dimension(18, 18));
+	//singleButton.setPreferredSize(new Dimension(18, 18));
 	JButton loopButton = new JButton("");
-	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/random.png")));
 	loopButton.setSelected(false);
-	loopButton.setPreferredSize(new Dimension(18, 18));
+	//loopButton.setPreferredSize(new Dimension(18, 18));
 
 	// provides functionality for sequential playmode
 	seqButton.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent arg0) {
 		if (seqButton.isSelected() == false) {
 		    if (loopButton.isSelected() == true) {
-			loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+			loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeat.png")));
 			loopButton.setSelected(false);
 		    }
 		    if (singleButton.isSelected() == true) {
@@ -167,7 +168,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			singleButton.setSelected(false);
 		    }
 
-		    seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
+		    seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeat.png")));
 		    playMode = PlayModeEnum.SEQUENTIAL;
 		    seqButton.setSelected(true);
 
@@ -181,11 +182,11 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	    public void actionPerformed(ActionEvent arg0) {
 		if (singleButton.isSelected() == false) {
 		    if (loopButton.isSelected() == true) {
-			loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+			loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeat.png")));
 			loopButton.setSelected(false);
 		    }
 		    if (seqButton.isSelected() == true) {
-			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/random.jpg")));
 			seqButton.setSelected(false);
 		    }
 		    singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
@@ -205,10 +206,10 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			singleButton.setSelected(false);
 		    }
 		    if (seqButton.isSelected() == true) {
-			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
+			seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/random.png")));
 			seqButton.setSelected(false);
 		    }
-		    loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
+		    loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/repeatON.png")));
 		    playMode = PlayModeEnum.LOOP;
 		    loopButton.setSelected(true);
 
@@ -228,22 +229,22 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	btnBackwards = new JButton("");
 	btnBackwards.setBackground(Color.WHITE);
-	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
+	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backwards.png")));
 	panelPlayButtons.add(btnBackwards);
 
 	btnPlayPause = new JToggleButton("");
 	btnPlayPause.setBackground(Color.WHITE);
-	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
-	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
+	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause2.png")));
+	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play.png")));
 	panelPlayButtons.add(btnPlayPause);
 
 	btnForwards = new JButton("");
 	btnForwards.setBackground(Color.WHITE);
-	btnForwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
+	btnForwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forwards.png")));
 	panelPlayButtons.add(btnForwards);
 
 	JLabel lblVolume = new JLabel("");
-	lblVolume.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
+	lblVolume.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/speaker.png")));
 	panelPlayButtons.add(lblVolume);
 
 	JPanel panelVolumeSlider = new JPanel();
