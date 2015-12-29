@@ -121,6 +121,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	JToggleButton favorite2 = new JToggleButton("");
 	favorite2.setIcon(icon1);
+	favorite2.setToolTipText("Like");
 	favorite2.setSelectedIcon(icon3);
 	
 	menuBar.add(favorite2);
@@ -164,6 +165,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	JButton seqButton = new JButton("");
 	seqButton.setIcon(icon7);
+	seqButton.setToolTipText("Random mode");
 	seqButton.setSelected(true);
 
 	ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
@@ -174,6 +176,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	JButton singleButton = new JButton("");
 	singleButton.setIcon(icon9);
+    singleButton.setToolTipText("Repeat song");
 	singleButton.setSelected(false);
 
 	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
@@ -184,6 +187,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	JButton loopButton = new JButton("");
 	loopButton.setIcon(icon11);
+    loopButton.setToolTipText("Repeat all");
 	loopButton.setSelected(false);
 
 	// provides functionality for sequential playmode
@@ -275,6 +279,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			   	ImageIcon icon13 = new ImageIcon(img13);
 			   	
 				singleButton.setIcon(icon13);
+				singleButton.setToolTipText("Repeat song");
 				singleButton.setSelected(false);
 		    }
 		    if (seqButton.isSelected() == true) {
@@ -319,6 +324,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	btnBackwards = new JButton("");
 	btnBackwards.setBackground(Color.WHITE);
+	btnBackwards.setToolTipText("Rewind");
 	btnBackwards.setIcon(icon13);
 	panelPlayButtons.add(btnBackwards);
 
@@ -337,7 +343,9 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	btnPlayPause = new JToggleButton("");
 	btnPlayPause.setBackground(Color.WHITE);
 	btnPlayPause.setSelectedIcon(icon15);
+	btnPlayPause.setToolTipText("Pause");
 	btnPlayPause.setIcon(icon17);
+	btnPlayPause.setToolTipText("Play");
 	panelPlayButtons.add(btnPlayPause);
 
 	ImageIcon icon18 = new ImageIcon(MainWindow.class.getResource("/icons/forwards.png"));
@@ -349,6 +357,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	btnForwards = new JButton("");
 	btnForwards.setBackground(Color.WHITE);
 	btnForwards.setIcon(icon19);
+	btnForwards.setToolTipText("Forward");
 	panelPlayButtons.add(btnForwards);
 
 	ImageIcon icon20 = new ImageIcon(MainWindow.class.getResource("/icons/speaker.png"));
@@ -359,6 +368,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	
 	JLabel lblVolume = new JLabel("");
 	lblVolume.setIcon(icon21);
+	lblVolume.setToolTipText("Speakers");
 	panelPlayButtons.add(lblVolume);
 
 	JPanel panelVolumeSlider = new JPanel();
