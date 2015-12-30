@@ -1,8 +1,18 @@
 package utillities;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
 
 import model.Music;
 
@@ -32,13 +42,26 @@ public class FormatUtils {
 
     public static ArrayList<Music> toMusicList(File[] files) {
 	ArrayList<Music> result = new ArrayList<>();
-	for (File file : files) {
-	    result.add(new Music(file.getName(),file.getPath()));
+	try {
+	    AudioFile f;
+	    for (File file : files) {
+		f = AudioFileIO.read(file);
+		Tag tag = f.getTag();
+		String year = tag.getFirst(FieldKey.YEAR);
+		if(year.length() >=4){
+		    year = year.substring(0, 4);
+		} 
+		result.add(new Music(file.getName(), tag.getFirst(FieldKey.ARTIST), tag.getFirst(FieldKey.ALBUM),
+			tag.getFirst(FieldKey.TITLE), year, file.getPath()));
+	    }
+	} catch (CannotReadException | IOException | TagException | ReadOnlyFileException
+		| InvalidAudioFrameException e) {
+	    e.printStackTrace();
 	}
 	return result;
     }
-    
+
     public static Music toMusic(File file) {
-	return new Music(file.getName(),file.getPath());
+	return new Music(file.getName(), file.getPath());
     }
 }

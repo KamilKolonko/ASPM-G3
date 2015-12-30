@@ -1,73 +1,51 @@
 package model;
 
-import java.awt.Dimension;
-import java.util.Vector;
+import java.util.ArrayList;
 
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-import dialog.Star;
 import list.MusicList;
 
 public class Model extends AbstractTableModel {
 
-    Vector rowData, columnNames;
-    JTable jt = null;
-
-    JScrollPane jsp = null;
-
-    private MusicList list;
+    private static final long serialVersionUID = 1L;
+    private String[] columnNames = { "Title", "Artist", "Album", "Year" };
+    private ArrayList<ArrayList<String>> data;
 
     public Model() {
-	columnNames = new Vector();
-	columnNames.add("Your music list");
-	//columnNames.add("Evaluation");
-
-	rowData = new Vector();
-
-	for (int i = 0; i < list.getList().size(); i++) {
-	    Vector hang = new Vector();
-	    String num = i < 10 ? "0" + (i + 1) : (i + 1) + "";
-
-	    hang.add(num + "  " + list.getList().get(i).getName());
-	    //hang.add(new Star(new Dimension(100,20)));
-	    rowData.add(hang);
-	}
+	refresh();
     }
 
     public int getColumnCount() {
-	return this.columnNames.size();
+	return columnNames.length;
     }
 
     public int getRowCount() {
-	return this.rowData.size();
+	return data.size();
     }
 
-    public Object getValueAt(int rowIndex, int column) {
-	return ((Vector) this.rowData.get(rowIndex)).get(column);
+    public String getColumnName(int col) {
+	return columnNames[col];
     }
 
-    public String getColumnName(int arg0) {
-	return (String) this.columnNames.get(arg0);
+    public String getValueAt(int row, int col) {
+	return data.get(row).get(col);
     }
 
-    public void refresh(){
-	rowData = new Vector();
-
-	for (int i = 0; i < list.getList().size(); i++) {
-	    Vector hang = new Vector();
-	    String num = i < 10 ? "0" + (i + 1) : (i + 1) + "";
-
-	   // Object[] objdata = { num + "  " + list.getList().get(i).getName(),new Boolean(false)};
-	    hang.add(num + "  " + list.getList().get(i).getName());
-	   // hang.add(new Boolean(false));
-	    rowData.add(hang);
-	   // rowData.add(objdata);
+    public void refresh() {
+	data = new ArrayList<>();
+	for (int i = 0; i < MusicList.getList().size(); i++) {
+	    Music music = MusicList.get(i);
+	    ArrayList<String> row = new ArrayList<>();
+	    if(music.getTitle()!=null && !music.getTitle().isEmpty())
+		row.add(music.getTitle());
+	    else
+		row.add(music.getName());
+	    row.add(music.getArtist());
+	    row.add(music.getAlbum());
+	    row.add(String.valueOf(music.getYear()));
+	    data.add(row);
 	}
     }
 
 }
-
-
-

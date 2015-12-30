@@ -14,6 +14,8 @@ import model.Music;
 
 public class FileList {
 
+    private static FileOutputStream fileOutputStream;
+
     public static void writeFile(String filePathAndName, String fileContent) {
 	try {
 	    File f = new File(filePathAndName);
@@ -33,7 +35,8 @@ public class FileList {
     // clear
     public static void clear(String path) {
 	try {
-	    new FileOutputStream(path).write(new String("").getBytes());
+	    fileOutputStream = new FileOutputStream(path);
+	    fileOutputStream.write(new String("").getBytes());
 	} catch (Exception e) {
 	    System.out.println("clear" + e.getMessage());
 	}
@@ -53,6 +56,11 @@ public class FileList {
 		music.setId(s[0]);// id
 		music.setName(s[1]);// name
 		music.setPath(s[2]);// path
+		music.setArtist(s[3]);// artist
+		music.setTitle(s[4]);// title
+		music.setAlbum(s[5]);// album
+		music.setYear(s[6]);// year
+		music.setFavorite(Boolean.parseBoolean(s[7]));// favorite
 		list.add(music);
 	    }
 	    reader.close();

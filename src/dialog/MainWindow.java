@@ -4,13 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ComponentListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
@@ -20,11 +22,13 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.File;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.util.ArrayList;
@@ -32,7 +36,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -49,71 +52,58 @@ import javax.swing.JScrollPane;
 import javax.swing.JSlider;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.JToggleButton;
 import javax.swing.ListSelectionModel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.table.TableModel;
+import javax.swing.table.TableColumn;
 
 import javafx.embed.swing.JFXPanel;
 import list.FileList;
 import list.MusicList;
 import model.Model;
 import model.Music;
+import model.MusicPropertiesEnum;
 import model.PlayModeEnum;
+import model.WidgetTableModel;
 import root.Player;
-import sun.security.krb5.internal.SeqNumber;
+import utillities.CustomTableConstraints;
 import utillities.FormatUtils;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
 
-import javax.swing.JTabbedPane;
+public class MainWindow extends JFrame implements WindowListener, MouseListener {
 
-public class MainWindow extends JFrame implements WindowListener,MouseListener {
-
-    /**
-     * 
-     */
     private static final long serialVersionUID = 1L;
-    private JPanel contentPane,panelLeft,panelList,panelMainCenter;
+    private JPanel contentPane, panelLeft, panelList, panelMainCenter;
     final JFileChooser fc = new JFileChooser();
     private File[] selectedFiles;
     private Player player;
-    private JScrollPane jsp,jsp1;
-    private JTable tableMusicList,listTable,tableMusicList1;
+    private JScrollPane playlistPanel, jsp1, artistPanel, genrePanel, albumPanel, yearPanel;
+    private JTable tableAlbums, tableMusicList, tableArtists, tableYears, listTable, tableMusicList1;
     private Model model;
-    final JSlider volumeSlider;
-    final JSlider sliderSongProgress;
-    private JButton btnBackwards, btnForwards;
-    private JTextField lyricsTextField;
+    final JSlider volumeSlider, sliderSongProgress;
+    private JButton btnYears, btnBackwards, btnForwards, btnArtists, btnList, btnCreate, newListname, btnAlbums;
+    private JTextField lyricsTextField, listName;
     public PlayModeEnum playMode;
-    final JLabel labelCurrentTime,labelTotalTime;
-    JLabel createList,cc;
-    JTextField listName;
+    final JLabel labelCurrentTime, labelTotalTime;
+    JLabel createList, cc;
     final PlayThread sliderActive;
     final JToggleButton btnPlayPause;
-    private JButton btnList,btnCreate,btn1,newListname;
-    private GridBagConstraints createList1,createList2;
-    private int y=0;
+    private GridBagConstraints createList1, createList2;
+    private int y = 0;
     private String name;
-    private JPopupMenu pum;
-    private JMenuItem item,item1;
+    private JPopupMenu pum, pop;
+    private JMenuItem item, item1;
     private JMenu del;
-    private  JPopupMenu  pop;
-
-
+    private JMenuBar menuBar;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	setBounds(100, 100, 900, 450);
 	new JFXPanel();
 
-	JMenuBar menuBar = new JMenuBar();
+	menuBar = new JMenuBar();
 	setJMenuBar(menuBar);
 
 	JMenu mnFile = new JMenu("File");
@@ -124,9 +114,29 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
 	JMenu mnHelp = new JMenu("Help");
 	menuBar.add(mnHelp);
-	
+
 	del = new JMenu("Delete");
 	menuBar.add(del);
+
+	
+	
+	ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/likeOFF.png"));
+	ImageIcon icon2 = new ImageIcon(MainWindow.class.getResource("/icons/like.png"));
+	
+	Image img = icon.getImage(); 
+	Image img3 = img.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon1 = new ImageIcon(img3);
+
+	Image img2 = icon2.getImage();
+	Image img4 = img2.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon3 = new ImageIcon(img4);
+	
+	JToggleButton favorite2 = new JToggleButton("");
+	favorite2.setIcon(icon1);
+	favorite2.setToolTipText("Like");
+	favorite2.setSelectedIcon(icon3);
+	
+	menuBar.add(favorite2);
 
 	JMenuItem mntmAbout = new JMenuItem("About");
 	mnHelp.add(mntmAbout);
@@ -157,82 +167,155 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
 	Component horizontalGlue = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue);
+
+	// Adding buttons for different playmodes
+	ImageIcon icon6 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
 	
+	Image img6 = icon6.getImage(); 
+	Image img7 = img6.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon7 = new ImageIcon(img7);
 	
-	//Adding buttons for different playmodes
 	JButton seqButton = new JButton("");
-	seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
+	seqButton.setIcon(icon7);
+	seqButton.setToolTipText("Random mode");
 	seqButton.setSelected(true);
-	seqButton.setPreferredSize(new Dimension(18,18));
-	JButton singleButton = new JButton("");
-	singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-	singleButton.setSelected(false);
-	singleButton.setPreferredSize(new Dimension(18,18));
-	JButton loopButton = new JButton("");
-	loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
-	loopButton.setSelected(false);
-	loopButton.setPreferredSize(new Dimension(18,18));
+
+	ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
 	
-	//provides functionality for sequential playmode
+	Image img8 = icon8.getImage(); 
+	Image img9 = img8.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon9 = new ImageIcon(img9);
+	
+	JButton singleButton = new JButton("");
+	singleButton.setIcon(icon9);
+    singleButton.setToolTipText("Repeat song");
+	singleButton.setSelected(false);
+
+	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
+	
+	Image img10 = icon10.getImage(); 
+	Image img11 = img10.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+	ImageIcon icon11 = new ImageIcon(img11);
+	
+	JButton loopButton = new JButton("");
+	loopButton.setIcon(icon11);
+    loopButton.setToolTipText("Repeat all");
+	loopButton.setSelected(false);
+
+	// provides functionality for sequential playmode
 	seqButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(seqButton.isSelected() == false){
-				if(loopButton.isSelected() == true){
-					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
-					loopButton.setSelected(false);
-				}
-				if(singleButton.isSelected() == true){
-					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-					singleButton.setSelected(false);
-				}
-				
-				seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlayON.jpg")));
-				playMode = PlayModeEnum.SEQUENTIAL;
-				seqButton.setSelected(true);
-			
-			}
+	    public void actionPerformed(ActionEvent arg0) {
+		if (seqButton.isSelected() == false) {
+		    if (loopButton.isSelected() == true) {   
+			   	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
+			    	
+			   	Image img12 = icon12.getImage(); 
+			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+			    ImageIcon icon13 = new ImageIcon(img13);
+			    
+				loopButton.setIcon(icon13);
+				loopButton.setSelected(false);
+		    }
+		    if (singleButton.isSelected() == true) {
+		    	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
+		    	
+		    	Image img10 = icon10.getImage(); 
+		    	Image img11 = img10.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+		    	ImageIcon icon11 = new ImageIcon(img11);
+		    	
+				singleButton.setIcon(icon11);
+				singleButton.setSelected(false);
+		    }
+
+		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/randomON.png"));
+	    	
+		   	Image img12 = icon12.getImage(); 
+		   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+		    ImageIcon icon13 = new ImageIcon(img13);
+
+		    seqButton.setIcon(icon13);
+		    playMode = PlayModeEnum.SEQUENTIAL;
+		    seqButton.setSelected(true);
+
 		}
+	    }
 	});
 	panelPlayButtons.add(seqButton);
-	
-	//provides functionality for single playmode	
+
+	// provides functionality for single playmode
 	singleButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(singleButton.isSelected() == false){
-				if(loopButton.isSelected() == true){
-					loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAll.png")));
-					loopButton.setSelected(false);
-				}
-				if(seqButton.isSelected() == true){
-					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
-					seqButton.setSelected(false);
-				}
-				singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png")));
-				playMode = PlayModeEnum.SINGLE;
-				singleButton.setSelected(true);
-			
-			}
+	    public void actionPerformed(ActionEvent arg0) {
+		if (singleButton.isSelected() == false) {
+		    if (loopButton.isSelected() == true) {
+		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
+		    	
+			   	Image img12 = icon12.getImage(); 
+			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+			    ImageIcon icon13 = new ImageIcon(img13);
+		    	
+				loopButton.setIcon(icon13);
+				loopButton.setSelected(false);
+		    }
+		    if (seqButton.isSelected() == true) {
+		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/randomON.jpg"));
+		    	
+			   	Image img12 = icon12.getImage(); 
+			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+			    ImageIcon icon13 = new ImageIcon(img13);
+				seqButton.setIcon(icon13);
+				seqButton.setSelected(false);
+		    }
+		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png"));
+	    	
+		   	Image img12 = icon12.getImage(); 
+		   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+		    ImageIcon icon13 = new ImageIcon(img13);
+		    
+		    singleButton.setIcon(icon13);
+		    playMode = PlayModeEnum.SINGLE;
+		    singleButton.setSelected(true);
+
 		}
+	    }
 	});
 	panelPlayButtons.add(singleButton);
-	//provides functionality for looped playmode	
+	// provides functionality for looped playmode
 	loopButton.addActionListener(new ActionListener() {
-		public void actionPerformed(ActionEvent arg0) {
-			if(loopButton.isSelected() == false){
-				if(singleButton.isSelected() == true){
-					singleButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png")));
-					singleButton.setSelected(false);
-				}
-				if(seqButton.isSelected() == true){
-					seqButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/sequentialPlay.jpg")));
-					seqButton.setSelected(false);
-				}
-				loopButton.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/replayAllON.png")));
-				playMode = PlayModeEnum.LOOP;
-				loopButton.setSelected(true);
-			
-			}
+	    public void actionPerformed(ActionEvent arg0) {
+		if (loopButton.isSelected() == false) {
+		    if (singleButton.isSelected() == true) {
+		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
+		    	
+			   	Image img12 = icon12.getImage(); 
+			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+			   	ImageIcon icon13 = new ImageIcon(img13);
+			   	
+				singleButton.setIcon(icon13);
+				singleButton.setToolTipText("Repeat song");
+				singleButton.setSelected(false);
+		    }
+		    if (seqButton.isSelected() == true) {
+		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
+		    	
+			   	Image img12 = icon12.getImage(); 
+			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+			   	ImageIcon icon13 = new ImageIcon(img13);
+			   	
+				seqButton.setIcon(icon13);
+				seqButton.setSelected(false);
+		    }
+		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeatON.png"));
+	    	
+		   	Image img12 = icon12.getImage(); 
+		   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+		   	ImageIcon icon13 = new ImageIcon(img13);
+		   	
+		    loopButton.setIcon(icon13);
+		    playMode = PlayModeEnum.LOOP;
+		    loopButton.setSelected(true);
+
 		}
+	    }
 	});
 	panelPlayButtons.add(loopButton);
 
@@ -245,24 +328,59 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	labelTotalTime = new JLabel("00:00:00");
 	panelPlayButtons.add(labelTotalTime);
 
+	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/backwards.png"));
+	
+   	Image img12 = icon12.getImage(); 
+   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+   	ImageIcon icon13 = new ImageIcon(img13);
+	
 	btnBackwards = new JButton("");
 	btnBackwards.setBackground(Color.WHITE);
-	btnBackwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/backward9.png")));
+	btnBackwards.setToolTipText("Rewind");
+	btnBackwards.setIcon(icon13);
 	panelPlayButtons.add(btnBackwards);
 
+	ImageIcon icon14 = new ImageIcon(MainWindow.class.getResource("/icons/pause2.png"));
+	
+   	Image img14 = icon14.getImage(); 
+   	Image img15 = img14.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+   	ImageIcon icon15 = new ImageIcon(img15);
+   	
+   	ImageIcon icon16 = new ImageIcon(MainWindow.class.getResource("/icons/play.png"));
+	
+   	Image img16 = icon16.getImage(); 
+   	Image img17 = img16.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+   	ImageIcon icon17 = new ImageIcon(img17);
+	
 	btnPlayPause = new JToggleButton("");
 	btnPlayPause.setBackground(Color.WHITE);
-	btnPlayPause.setSelectedIcon(new ImageIcon(MainWindow.class.getResource("/icons/pause.png")));
-	btnPlayPause.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/play46.png")));
+	btnPlayPause.setSelectedIcon(icon15);
+	btnPlayPause.setToolTipText("Pause");
+	btnPlayPause.setIcon(icon17);
+	btnPlayPause.setToolTipText("Play");
 	panelPlayButtons.add(btnPlayPause);
 
+	ImageIcon icon18 = new ImageIcon(MainWindow.class.getResource("/icons/forwards.png"));
+	
+   	Image img18 = icon18.getImage(); 
+   	Image img19 = img18.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+   	ImageIcon icon19 = new ImageIcon(img19);
+	
 	btnForwards = new JButton("");
 	btnForwards.setBackground(Color.WHITE);
-	btnForwards.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/forward9.png")));
+	btnForwards.setIcon(icon19);
+	btnForwards.setToolTipText("Forward");
 	panelPlayButtons.add(btnForwards);
 
+	ImageIcon icon20 = new ImageIcon(MainWindow.class.getResource("/icons/speaker.png"));
+	
+   	Image img20 = icon20.getImage(); 
+   	Image img21 = img20.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
+   	ImageIcon icon21 = new ImageIcon(img21);
+	
 	JLabel lblVolume = new JLabel("");
-	lblVolume.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/volume33.png")));
+	lblVolume.setIcon(icon21);
+	lblVolume.setToolTipText("Speakers");
 	panelPlayButtons.add(lblVolume);
 
 	JPanel panelVolumeSlider = new JPanel();
@@ -286,16 +404,15 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	Component horizontalGlue_1 = Box.createHorizontalGlue();
 	panelPlayButtons.add(horizontalGlue_1);
 
-	//show list
+	// show list
 	panelLeft = new JPanel();
-	panelLeft.setPreferredSize(new Dimension(200,400));
-	JFrame frame =new JFrame();
-	frame.getContentPane().add(panelLeft, BorderLayout.WEST);
+	panelLeft.setPreferredSize(new Dimension(200, 400));
+	// frame.getContentPane().add(panelLeft, BorderLayout.WEST);
 	GridBagLayout gbl_leftpanel = new GridBagLayout();
-	gbl_leftpanel.columnWidths = new int[]{10,180};
-	gbl_leftpanel.rowHeights = new int[]{40, 25, 25, 25, 25, 25, 25, 25, 25};
-	gbl_leftpanel.columnWeights = new double[]{0.0, Double.MIN_VALUE};
-	gbl_leftpanel.rowWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE};
+	gbl_leftpanel.columnWidths = new int[] { 10, 180 };
+	gbl_leftpanel.rowHeights = new int[] { 40, 25, 25, 25, 25, 25, 25, 25, 25 };
+	gbl_leftpanel.columnWeights = new double[] { 0.0, Double.MIN_VALUE };
+	gbl_leftpanel.rowWeights = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, Double.MIN_VALUE };
 	panelLeft.setLayout(gbl_leftpanel);
 	JLabel label = new JLabel("Music");
 	label.setForeground(Color.BLACK);
@@ -306,147 +423,147 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	gbc_label.gridx = 0;
 	gbc_label.gridy = 0;
 	panelLeft.add(label, gbc_label);
-	//FlowLayout flowLayout = (FlowLayout) panelLeft.getLayout();
+	// FlowLayout flowLayout = (FlowLayout) panelLeft.getLayout();
 	contentPane.add(panelLeft, BorderLayout.WEST);
-	//create
-	JLabel aa = new JLabel("");
-	aa.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
-	GridBagConstraints constraints1= new GridBagConstraints();
-	constraints1.insets = new Insets(0, 0, 5, 0);
-	constraints1.fill = GridBagConstraints.NONE;
-	constraints1.anchor = GridBagConstraints.EAST;
-	constraints1.gridx = 0;
-	constraints1.gridy = 1;
-	panelLeft.add(aa, constraints1);
+
+	// artists
+	JLabel iconArtists = new JLabel("");
+	iconArtists.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/girl13.png")));
+	panelLeft.add(iconArtists, new CustomTableConstraints(0, 1, GridBagConstraints.CENTER));
+	btnArtists = new JButton("Artists");
+	btnArtists.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
+	btnArtists.setForeground(Color.BLACK);
+	btnArtists.setBorder(null);
+	btnArtists.setContentAreaFilled(false);
+	panelLeft.add(btnArtists, new CustomTableConstraints(1, 1, GridBagConstraints.WEST));
+
+	// albums
+	JLabel iconAlbums = new JLabel("");
+	iconAlbums.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/music213.png")));
+	panelLeft.add(iconAlbums, new CustomTableConstraints(0, 2, GridBagConstraints.CENTER));
+	btnAlbums = new JButton("Albums");
+	btnAlbums.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
+	btnAlbums.setForeground(Color.BLACK);
+	btnAlbums.setBorder(null);
+	btnAlbums.setContentAreaFilled(false);
+	panelLeft.add(btnAlbums, new CustomTableConstraints(1, 2, GridBagConstraints.WEST));
+
+	// years
+	JLabel iconYears = new JLabel("");
+	iconYears.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/years.png")));
+	panelLeft.add(iconYears, new CustomTableConstraints(0, 3, GridBagConstraints.CENTER));
+	btnYears = new JButton("Years");
+	btnYears.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
+	btnYears.setForeground(Color.BLACK);
+	btnYears.setBorder(null);
+	btnYears.setContentAreaFilled(false);
+	panelLeft.add(btnYears, new CustomTableConstraints(1, 3, GridBagConstraints.WEST));
+
+	// create
+	JLabel iconCreateList = new JLabel("");
+	iconCreateList.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
+	panelLeft.add(iconCreateList, new CustomTableConstraints(0, 4, GridBagConstraints.EAST));
 	btnCreate = new JButton("Create music list");
 	btnCreate.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
 	btnCreate.setForeground(Color.BLACK);
 	btnCreate.setBorder(null);
-	btnCreate.setContentAreaFilled (false);
-	//btnCreate.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
+	btnCreate.setContentAreaFilled(false);
+	// btnCreate.setIcon(new
+	// ImageIcon(MainWindow.class.getResource("/icons/list.png")));
 	btnCreate.addMouseListener(this);
-	GridBagConstraints gbc_btnCreate = new GridBagConstraints();
-	gbc_btnCreate.insets = new Insets(0, 0, 5, 0);
-	gbc_btnCreate.fill = GridBagConstraints.NONE;
-	gbc_btnCreate.anchor = GridBagConstraints.WEST;
-	gbc_btnCreate.gridx = 1;
-	gbc_btnCreate.gridy = 1;
-	//btnCreate = new JButton("");
-	panelLeft.add(btnCreate, gbc_btnCreate);
+	panelLeft.add(btnCreate, new CustomTableConstraints(1, 4, GridBagConstraints.WEST));
+
 	// recent
 	JLabel bb = new JLabel("");
 	bb.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
-	GridBagConstraints constraints2 = new GridBagConstraints();
-	constraints2.insets = new Insets(0, 0, 5, 0);
-	constraints2.fill = GridBagConstraints.NONE;
-	constraints2.anchor = GridBagConstraints.EAST;
-	constraints2.gridx = 0;
-	constraints2.gridy = 2;
-	panelLeft.add(bb, constraints2);
+	panelLeft.add(bb, new CustomTableConstraints(0, 5, GridBagConstraints.EAST));
 	btnList = new JButton("Recent music list");
 	btnList.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
 	btnList.setForeground(Color.BLACK);
 	btnList.addMouseListener(this);
 	btnList.setBorder(null);
-	btnList.setContentAreaFilled (false);
-	GridBagConstraints gbc_btnList = new GridBagConstraints();
-	gbc_btnList.fill = GridBagConstraints.NONE;
-	gbc_btnList.anchor = GridBagConstraints.WEST;
-	gbc_btnList.insets = new Insets(0, 0, 5, 0);
-	gbc_btnList.gridx = 1;
-	gbc_btnList.gridy = 2;
-	panelLeft.add(btnList, gbc_btnList);
-	
-	//create new list
-		cc = new JLabel("");
-		cc.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
-		GridBagConstraints constraints3 = new GridBagConstraints();
-		constraints3.insets = new Insets(0, 0, 5, 0);
-		constraints3.fill = GridBagConstraints.NONE;
-		constraints3.anchor = GridBagConstraints.EAST;
-		constraints3.gridx =0 ;
-		constraints3.gridy =3;
-		panelLeft.add(cc, constraints3);
-		listName = new JTextField();
-		createList1 = new GridBagConstraints();
-		createList1.fill = GridBagConstraints.BOTH;
-		createList1.anchor = GridBagConstraints.WEST;
-		createList1.insets = new Insets(0, 0, 5, 0);
-		createList1.gridx = 1;
-		createList1.gridy =3;
-		panelLeft.add(listName,createList1);
-		cc.setVisible(false);
-		listName.setVisible(false);
-	  
-		listName.addActionListener(new ActionListener(){
+	btnList.setContentAreaFilled(false);
+	panelLeft.add(btnList, new CustomTableConstraints(1, 5, GridBagConstraints.WEST));
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				name = listName.getText();
-				newListname = new JButton(name);
-				newListname.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
-				newListname.setForeground(Color.BLACK);
-				newListname.setBorder(null);
-				newListname.setContentAreaFilled (false);
-				System.out.println(name);
-				newListname.setText(name);
-				panelLeft.remove(listName);
-				//listName.setVisible(false);
-				createList2 = new GridBagConstraints();
-				createList2.fill = GridBagConstraints.NONE;
-				createList2.anchor = GridBagConstraints.WEST;
-				createList2.insets = new Insets(0, 0, 5, 0);
-				createList2.gridx = 1;
-				createList2.gridy =3;
-				panelLeft.add(newListname,createList2);
-				panelLeft.updateUI();
-				panelLeft.repaint();
-				newListname.addActionListener(new ActionListener(){
+	// create new list
+	cc = new JLabel("");
+	cc.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
+	panelLeft.add(cc, new CustomTableConstraints(0, 6, GridBagConstraints.EAST));
+	listName = new JTextField();
+	panelLeft.add(listName, new CustomTableConstraints(1, 6, GridBagConstraints.WEST, GridBagConstraints.BOTH));
+	cc.setVisible(false);
+	listName.setVisible(false);
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						// TODO Auto-generated method stub
-						newList();
-					}
-					
-				});
-			}
-			
+	listName.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		name = listName.getText();
+		newListname = new JButton(name);
+		newListname.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
+		newListname.setForeground(Color.BLACK);
+		newListname.setBorder(null);
+		newListname.setContentAreaFilled(false);
+		System.out.println(name);
+		newListname.setText(name);
+		panelLeft.remove(listName);
+		// listName.setVisible(false);
+		createList2 = new GridBagConstraints();
+		createList2.fill = GridBagConstraints.NONE;
+		createList2.anchor = GridBagConstraints.WEST;
+		createList2.insets = new Insets(0, 0, 5, 0);
+		createList2.gridx = 1;
+		createList2.gridy = 3;
+		panelLeft.add(newListname, createList2);
+		panelLeft.updateUI();
+		panelLeft.repaint();
+		newListname.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			newList();
+		    }
+
 		});
-		
-		//delete pop window
-	    pop = new JPopupMenu();
-	    item = new JMenuItem("delete list");
-	    pop.add(item);
-	    btnList.addMouseListener(new MouseAdapter(){
-	    	public void mousePressed(MouseEvent e){
-	    		if(e.getSource() == btnList && e.getButton()== MouseEvent.BUTTON3){
-					System.out.println("pop");
-					pop.show(panelLeft,100,100);
-				}
-	    	}
-	    });
-	    item.addActionListener(new ActionListener(){
+	    }
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				deletelist();
-				tableMusicList.repaint();
-				
-			}
-	    	
-	    });
-	
+	});
+
+	// delete pop window
+	pop = new JPopupMenu();
+	item = new JMenuItem("delete list");
+	pop.add(item);
+	btnList.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent e) {
+		if (e.getSource() == btnList && e.getButton() == MouseEvent.BUTTON3) {
+		    System.out.println("pop");
+		    pop.show(panelLeft, 100, 100);
+		}
+	    }
+	});
+	item.addActionListener(new ActionListener() {
+
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		deletelist();
+		tableMusicList.repaint();
+
+	    }
+
+	});
+
 	JLabel Grade = new JLabel("Grade:");
 	panelPlayButtons.add(Grade);
-	
-	//star 	
-	Star starbutton = new Star(new Dimension(100,20));
+
+	// star
+	Star starbutton = new Star(new Dimension(100, 20));
 	starbutton.setEnabled(true);
-	starbutton.setPreferredSize(new Dimension(100,20));
+	starbutton.setPreferredSize(new Dimension(100, 20));
 	panelPlayButtons.add(starbutton);
+
 	
 	starbutton.addMouseListener(new MouseAdapter(){
     	public void mouseClicked(MouseEvent e){
@@ -543,8 +660,10 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
     });
  
 	
+
 	panelMainCenter = new JPanel();
 	contentPane.add(panelMainCenter, BorderLayout.CENTER);
+	panelMainCenter.setLayout(null);
 	tableMusicList = new JTable(model);
 	tableMusicList.setOpaque(false);
 
@@ -552,49 +671,91 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	tableMusicList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 	tableMusicList.setShowHorizontalLines(false);
 	tableMusicList.setSelectionBackground(Color.LIGHT_GRAY);
-	panelMainCenter.setLayout(new BorderLayout(0, 0));
-	jsp = new JScrollPane(tableMusicList);
-	panelMainCenter.add(jsp);
-	jsp.setOpaque(false);
-	
-	
+	playlistPanel = new JScrollPane(tableMusicList);
+	playlistPanel.setBounds(0, 0, 674, 269);
+	panelMainCenter.add(playlistPanel);
+	playlistPanel.setVisible(true);
+	playlistPanel.setOpaque(false);
+
+	tableArtists = new JTable(new WidgetTableModel(MusicPropertiesEnum.ARTIST.toString()));
+	tableArtists.setOpaque(false);
+	tableArtists.setRowHeight(30);
+	tableArtists.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableArtists.setShowHorizontalLines(false);
+	tableArtists.setSelectionBackground(Color.LIGHT_GRAY);
+	artistPanel = new JScrollPane(tableArtists);
+	artistPanel.setBounds(0, 0, 674, 269);
+	artistPanel.setVisible(false);
+	panelMainCenter.add(artistPanel);
+	artistPanel.setOpaque(false);
+
+	genrePanel = new JScrollPane();
+	genrePanel.setBounds(0, 0, 674, 269);
+	genrePanel.setVisible(false);
+	panelMainCenter.add(genrePanel);
+	genrePanel.setOpaque(false);
+
+	tableAlbums = new JTable(new WidgetTableModel(MusicPropertiesEnum.ALBUM.toString()));
+	tableAlbums.setOpaque(false);
+	tableAlbums.setRowHeight(30);
+	tableAlbums.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableAlbums.setShowHorizontalLines(false);
+	tableAlbums.setSelectionBackground(Color.LIGHT_GRAY);
+	albumPanel = new JScrollPane(tableAlbums);
+	albumPanel.setBounds(0, 0, 674, 269);
+	albumPanel.setVisible(false);
+	panelMainCenter.add(albumPanel);
+	albumPanel.setOpaque(false);
+
+	tableYears = new JTable(new WidgetTableModel(MusicPropertiesEnum.YEAR.toString()));
+	tableYears.setOpaque(false);
+	tableYears.setRowHeight(30);
+	tableYears.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableYears.setShowHorizontalLines(false);
+	tableYears.setSelectionBackground(Color.LIGHT_GRAY);
+	yearPanel = new JScrollPane(tableYears);
+	yearPanel.setBounds(0, 0, 674, 269);
+	yearPanel.setVisible(false);
+	panelMainCenter.add(yearPanel);
+	yearPanel.setOpaque(false);
+
 	JPanel panel = new JPanel();
-	panelMainCenter.add(panel, BorderLayout.SOUTH);
-	
-	//add music
-		pum = new JPopupMenu();
-		item1 = new JMenuItem("add music");   
-		pum.add(item1);
-		tableMusicList.addMouseListener(this);
-		item1.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				fc.setMultiSelectionEnabled(true);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
-				fc.setFileFilter(filter);
-				int returnVal = fc.showOpenDialog(contentPane);
-				if (returnVal == JFileChooser.APPROVE_OPTION) {
-				    selectedFiles = fc.getSelectedFiles();
-				    ArrayList<Music> list = MusicList.getList();
-				    list.addAll(FormatUtils.toMusicList(selectedFiles));
-				    Model model = (Model) tableMusicList.getModel();
-				    model.refresh();
-				    model.fireTableDataChanged();
-				    tableMusicList.repaint();
-				}
-			}
-			
-		});
-		
-		//delete music
-		del.addMouseListener(this);
+	panel.setBounds(0, 269, 674, 30);
+	panelMainCenter.add(panel);
+
+	// add music
+	pum = new JPopupMenu();
+	item1 = new JMenuItem("add music");
+	pum.add(item1);
+	tableMusicList.addMouseListener(this);
+	item1.addActionListener(new ActionListener() {
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		fc.setMultiSelectionEnabled(true);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter(".mp3, .wav, .m4a", "mp3", "wav", "m4a");
+		fc.setFileFilter(filter);
+		int returnVal = fc.showOpenDialog(contentPane);
+		if (returnVal == JFileChooser.APPROVE_OPTION) {
+		    selectedFiles = fc.getSelectedFiles();
+		    ArrayList<Music> list = MusicList.getList();
+		    list.addAll(FormatUtils.toMusicList(selectedFiles));
+		    Model model = (Model) tableMusicList.getModel();
+		    model.refresh();
+		    model.fireTableDataChanged();
+		    tableMusicList.repaint();
+		}
+	    }
+
+	});
+
+	// delete music
+	del.addMouseListener(this);
 
 	lyricsTextField = new JTextField();
 	lyricsTextField.setEditable(false);
 	panel.add(lyricsTextField);
 	lyricsTextField.setColumns(40);
-	jsp.getViewport().setOpaque(false);
+	playlistPanel.getViewport().setOpaque(false);
 
 	this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 	this.addWindowListener(this);
@@ -728,8 +889,40 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 		}
 	    }
 	});
-    
+
+	btnArtists.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableArtists.getRowCount() == 0)
+		    tableArtists.setModel(new WidgetTableModel(MusicPropertiesEnum.ARTIST.toString()));
+		artistPanel.setVisible(true);
+		playlistPanel.setVisible(false);
+		yearPanel.setVisible(false);
+		albumPanel.setVisible(false);
+	    }
+	});
 	
+	btnAlbums.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableAlbums.getRowCount() == 0)
+		    tableAlbums.setModel(new WidgetTableModel(MusicPropertiesEnum.ALBUM.toString()));
+		albumPanel.setVisible(true);
+		playlistPanel.setVisible(false);
+		artistPanel.setVisible(false);
+		yearPanel.setVisible(false);
+	    }
+	});
+	
+	btnYears.addActionListener(new ActionListener() {
+	    public void actionPerformed(ActionEvent e) {
+		if(MusicList.getSize()> 0 && tableYears.getRowCount() == 0)
+		    tableYears.setModel(new WidgetTableModel(MusicPropertiesEnum.YEAR.toString()));
+		yearPanel.setVisible(true);
+		playlistPanel.setVisible(false);
+		artistPanel.setVisible(false);
+		albumPanel.setVisible(false);
+	    }
+	});
+
 	tableMusicList.addMouseListener(new MouseAdapter() {
 	    public void mousePressed(MouseEvent me) {
 		if (me.getClickCount() == 2) {
@@ -738,11 +931,40 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 			sliderActive.threadStop();
 		    }
 
-
 		    if (btnPlayPause.isSelected() == true)
 			btnPlayPause.setSelected(false);
 		    btnPlayPause.setSelected(true);
 		}
+	    }
+
+	    public void mouseClicked(MouseEvent me) {
+		boolean isFavorite = MusicList.get(tableMusicList.getSelectedRow()).getFavorite();
+		Music m = new Music();
+		// System.out.println(isFavorite);
+		if (me.getSource() == tableMusicList) {
+		    favorite2.setSelected(true);
+		    favorite2.setSelected(false);
+		    favorite2.addItemListener(new ItemListener() {
+			@Override
+			public void itemStateChanged(ItemEvent e) {
+			    // TODO Auto-generated method stub
+			    if (e.getStateChange() == ItemEvent.SELECTED) {
+				MusicList.get(tableMusicList.getSelectedRow()).setFavorite(true);
+			    } else
+				MusicList.get(tableMusicList.getSelectedRow()).setFavorite(false);
+
+			}
+		    });
+		    if (isFavorite == true) {
+			favorite2.setSelected(false);
+			favorite2.setSelected(true);
+		    } else {
+			favorite2.setSelected(true);
+			favorite2.setSelected(false);
+		    }
+
+		}
+		// System.out.println(isFavorite);
 	    }
 	});
     }
@@ -757,7 +979,7 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	public void setState(int threadState) {
 	    this.threadState = threadState;
 	}
-   
+
 	public void run() {
 	    while (threadState == RUNNING) {
 		if (threadState == STOPIT) {
@@ -835,132 +1057,133 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	    break;
 	}
     }
-//music list (create list)
-    private void addMusicList(int x){
-    	for(int i= 0;i<x;i++){
-    		int j=0;
-    		cc = new JLabel("");
-    		cc.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
-    		GridBagConstraints constraints3 = new GridBagConstraints();
-    		constraints3.insets = new Insets(0, 0, 5, 0);
-    		constraints3.fill = GridBagConstraints.NONE;
-    		constraints3.anchor = GridBagConstraints.EAST;
-    		constraints3.gridx =j ;
-    		constraints3.gridy =(i+4);
-    		System.out.println("yi"+j+(i+4));
-    		panelLeft.add(cc, constraints3);
-    		listName = new JTextField();
-    		createList1 = new GridBagConstraints();
-    		createList1.fill = GridBagConstraints.BOTH;
-    		createList1.insets = new Insets(0, 0, 5, 0);
-    		createList1.gridx = j+1;
-    		createList1.gridy =i+4;
-    		System.out.println("er"+(j+1)+(i+4));
-    		panelLeft.add(listName,createList1);
-    		cc.setVisible(false);
-    		listName.setVisible(false);
-    		createList2 = new GridBagConstraints();
-    		createList2.fill = GridBagConstraints.NONE;
-    		createList2.anchor = GridBagConstraints.WEST;
-    		createList2.insets = new Insets(0, 0, 5, 0);
-    		createList2.gridx = j+1;
-    		createList2.gridy =i+4;
-    		changeListName();
-   
-    	 		
-    	}
+
+    // music list (create list)
+    private void addMusicList(int x) {
+	for (int i = 0; i < x; i++) {
+	    int j = 0;
+	    cc = new JLabel("");
+	    cc.setIcon(new ImageIcon(MainWindow.class.getResource("/icons/list.png")));
+	    GridBagConstraints constraints3 = new GridBagConstraints();
+	    constraints3.insets = new Insets(0, 0, 5, 0);
+	    constraints3.fill = GridBagConstraints.NONE;
+	    constraints3.anchor = GridBagConstraints.EAST;
+	    constraints3.gridx = j;
+	    constraints3.gridy = (i + 4);
+	    System.out.println("yi" + j + (i + 4));
+	    panelLeft.add(cc, constraints3);
+	    listName = new JTextField();
+	    createList1 = new GridBagConstraints();
+	    createList1.fill = GridBagConstraints.BOTH;
+	    createList1.insets = new Insets(0, 0, 5, 0);
+	    createList1.gridx = j + 1;
+	    createList1.gridy = i + 4;
+	    System.out.println("er" + (j + 1) + (i + 4));
+	    panelLeft.add(listName, createList1);
+	    cc.setVisible(false);
+	    listName.setVisible(false);
+	    createList2 = new GridBagConstraints();
+	    createList2.fill = GridBagConstraints.NONE;
+	    createList2.anchor = GridBagConstraints.WEST;
+	    createList2.insets = new Insets(0, 0, 5, 0);
+	    createList2.gridx = j + 1;
+	    createList2.gridy = i + 4;
+	    changeListName();
+
+	}
     }
-  //music list (modify list name)
-    private void changeListName(){
-    	listName.addActionListener(new ActionListener(){
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				name = listName.getText();
-				newListname = new JButton(name);
-				newListname.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
-				newListname.setForeground(Color.BLACK);
-				newListname.setBorder(null);
-				newListname.setContentAreaFilled (false);
-				System.out.println(name);
-				newListname.setText(name);
-				panelLeft.remove(listName);
-				//listName.setVisible(false);
-				panelLeft.add(newListname,createList2);
-				panelLeft.updateUI();
-				panelLeft.repaint();
-				newListname.addActionListener(new ActionListener(){
+    // music list (modify list name)
+    private void changeListName() {
+	listName.addActionListener(new ActionListener() {
 
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						// TODO Auto-generated method stub
-						newList();
-					}
-					
-				});
-				
-				
-			}
-			
+	    @Override
+	    public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+		name = listName.getText();
+		newListname = new JButton(name);
+		newListname.setFont(new Font("Microsoft YaHei UI", Font.PLAIN, 10));
+		newListname.setForeground(Color.BLACK);
+		newListname.setBorder(null);
+		newListname.setContentAreaFilled(false);
+		System.out.println(name);
+		newListname.setText(name);
+		panelLeft.remove(listName);
+		// listName.setVisible(false);
+		panelLeft.add(newListname, createList2);
+		panelLeft.updateUI();
+		panelLeft.repaint();
+		newListname.addActionListener(new ActionListener() {
+
+		    @Override
+		    public void actionPerformed(ActionEvent e) {
+			// TODO Auto-generated method stub
+			newList();
+		    }
+
 		});
-    	
-	
-    }
-    
-    private void newList(){
-    	tableMusicList.setVisible(false);
-    	tableMusicList1 = new JTable(model);
-		tableMusicList1.setOpaque(false);
 
-		tableMusicList1.setRowHeight(30);
-		tableMusicList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-		tableMusicList1.setShowHorizontalLines(false);
-		tableMusicList1.setSelectionBackground(Color.LIGHT_GRAY);
-		panelMainCenter.setLayout(new BorderLayout(0, 0));
-		jsp1 = new JScrollPane(tableMusicList1);
-		panelMainCenter.add(jsp1);
-		jsp1.setOpaque(false);
-		panelMainCenter.remove(tableMusicList);
-		panelMainCenter.updateUI();
-		panelMainCenter.repaint();
-    }
-    private void deleteOneSong(){
-    	ArrayList<Music> list = MusicList.getList();
-    	File file = new File("file/musiclist.txt");	
-    	int songIndex = tableMusicList.getSelectedRow();
-    	
-    	//play,not end
-    	if(player.isPlaying()) {
-    		
-    		player.stop();
-    		player = new Player(MusicList.get(songIndex+1).getPath());
-    		
-    		player.play();
-    		list.remove(songIndex);
-    	}
-    	else list.remove(songIndex);
-    	
-    	FileList.readFileByLines(file.getPath());
-    	tableMusicList.setModel(new Model());
-	    tableMusicList.repaint();
-}
-    // delete list
-    private void deletelist(){
-    	ArrayList<Music> list = MusicList.getList();
-    	File file = new File("file/musiclist.txt");
-    	System.out.println(list);
-	    if(list.isEmpty() == false){
-	    	for(int i= list.size()-1;i>=0;i--){
-	    		System.out.println(i); 
-	    		list.remove(i);
-	    	}
 	    }
-	    System.out.println(list);
-		FileList.readFileByLines(file.getPath());
-		tableMusicList.setModel(new Model());
-	    tableMusicList.repaint();
-	    
+
+	});
+
+    }
+
+    private void newList() {
+	tableMusicList.setVisible(false);
+	tableMusicList1 = new JTable(model);
+	tableMusicList1.setOpaque(false);
+
+	tableMusicList1.setRowHeight(30);
+	tableMusicList1.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+	tableMusicList1.setShowHorizontalLines(false);
+	tableMusicList1.setSelectionBackground(Color.LIGHT_GRAY);
+	panelMainCenter.setLayout(new BorderLayout(0, 0));
+	jsp1 = new JScrollPane(tableMusicList1);
+	panelMainCenter.add(jsp1);
+	jsp1.setOpaque(false);
+	panelMainCenter.remove(tableMusicList);
+	panelMainCenter.updateUI();
+	panelMainCenter.repaint();
+    }
+
+    private void deleteOneSong() {
+	ArrayList<Music> list = MusicList.getList();
+	File file = new File("file/musiclist.txt");
+	int songIndex = tableMusicList.getSelectedRow();
+
+	// play,not end
+	if (player.isPlaying()) {
+
+	    player.stop();
+	    player = new Player(MusicList.get(songIndex + 1).getPath());
+
+	    player.play();
+	    list.remove(songIndex);
+	} else
+	    list.remove(songIndex);
+
+	FileList.readFileByLines(file.getPath());
+	tableMusicList.setModel(new Model());
+	tableMusicList.repaint();
+    }
+
+    // delete list
+    private void deletelist() {
+	ArrayList<Music> list = MusicList.getList();
+	File file = new File("file/musiclist.txt");
+	System.out.println(list);
+	if (list.isEmpty() == false) {
+	    for (int i = list.size() - 1; i >= 0; i--) {
+		System.out.println(i);
+		list.remove(i);
+	    }
+	}
+	System.out.println(list);
+	FileList.readFileByLines(file.getPath());
+	tableMusicList.setModel(new Model());
+	tableMusicList.repaint();
+
     }
 
     @Override
@@ -978,7 +1201,8 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	FileList.readFileByLines(file.getPath());
 	tableMusicList.setModel(new Model());
 	tableMusicList.setVisible(false);
-    	
+	Model aa = new Model();
+
     }
 
     @Override
@@ -986,9 +1210,9 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	if (MusicList.getList().size() != 0) {
 	    FileList.clear("file/musiclist.txt");
 	    ArrayList<Music> list = MusicList.getList();
+	    Music heart = new Music();
 	    for (int i = 0; i < list.size(); i++) {
-		FileList.writeFile("file/musiclist.txt",
-			list.get(i).getId() + "," + list.get(i).getName() + "," + list.get(i).getPath() + "\n");
+		FileList.writeFile("file/musiclist.txt", list.get(i).toCommaSeparatedString() + "\n");
 	    }
 	}
     }
@@ -1023,51 +1247,51 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 
     }
 
-	@Override
-	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource()== btnList){
-			tableMusicList.setVisible(true);
-			//tableMusicList1.setVisible(false);
-		}
-		if(e.getSource()== btnCreate){
-			System.out.println("create list");
-			addMusicList(y);
-			cc.setVisible(true);
-			listName.setVisible(true);
-			y++;	
-		}
-		if(e.getSource() == del ){
-			
-			 deleteOneSong();
-			
-		}
+    @Override
+    public void mouseClicked(MouseEvent e) {
+	// TODO Auto-generated method stub
+	if (e.getSource() == btnList) {
+	    playlistPanel.setVisible(true);
+	    tableMusicList.setVisible(true);
+	    // tableMusicList1.setVisible(false);
 	}
-		
-		
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		if(e.getSource() == tableMusicList && e.getButton() == MouseEvent.BUTTON3){
-			pum.show(panelMainCenter, 300, 100);
-		}
+	if (e.getSource() == btnCreate) {
+	    System.out.println("create list");
+	    addMusicList(y);
+	    cc.setVisible(true);
+	    listName.setVisible(true);
+	    y++;
+	}
+	if (e.getSource() == del) {
+
+	    deleteOneSong();
 	}
 
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    }
 
-	@Override
-	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+    @Override
+    public void mousePressed(MouseEvent e) {
+	// TODO Auto-generated method stub
+	if (e.getSource() == tableMusicList && e.getButton() == MouseEvent.BUTTON3) {
+	    pum.show(panelMainCenter, 300, 100);
 	}
+    }
 
-	@Override
-	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    public void mouseReleased(MouseEvent e) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+	// TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+	// TODO Auto-generated method stub
+
+    }
 }
