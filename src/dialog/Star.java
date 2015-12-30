@@ -92,6 +92,11 @@ public class Star extends Component {
 	public int getLevel(){
 		return num;
 	}
+	
+	public void setLevel(int level){
+		num = level;
+		repaint();
+	}
 }
 
 

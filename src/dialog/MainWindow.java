@@ -79,8 +79,8 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     final JFileChooser fc = new JFileChooser();
     private File[] selectedFiles;
     private Player player;
-    private JScrollPane playlistPanel, jsp1, artistPanel, genrePanel, albumPanel, yearPanel;
-    private JTable tableAlbums, tableMusicList, tableArtists, tableYears, listTable, tableMusicList1;
+    private JScrollPane playlistPanel, jsp1, artistPanel, genrePanel, albumPanel, yearPanel,gradePanel;
+    private JTable tableAlbums, tableMusicList, tableArtists, tableYears,tableGrade, listTable, tableMusicList1;
     private Model model;
     final JSlider volumeSlider, sliderSongProgress;
     private JButton btnYears, btnBackwards, btnForwards, btnArtists, btnList, btnCreate, newListname, btnAlbums;
@@ -458,6 +458,8 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	btnYears.setBorder(null);
 	btnYears.setContentAreaFilled(false);
 	panelLeft.add(btnYears, new CustomTableConstraints(1, 3, GridBagConstraints.WEST));
+	
+ 
 
 	// create
 	JLabel iconCreateList = new JLabel("");
@@ -631,13 +633,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     		}
     	      
     	    Iterator<Map.Entry<String, String>> entries = evaluationMap.entrySet().iterator();  
-    	    /*  
-    	    try {
-				file.createNewFile();
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			}
-			*/
+    	
     	    try {
 				FileOutputStream fs = new FileOutputStream(new File(filename));
 			} catch (FileNotFoundException e2) {
@@ -648,7 +644,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     	        Map.Entry<String, String> entry = entries.next();  
 
     			try {
-    	            //打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
+ 
     	            FileWriter writer = new FileWriter(filename, true);
     	            writer.write(entry.getKey() + " " + entry.getValue()+"\r\n");
     	            writer.close();
@@ -965,6 +961,62 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 		}
 		// System.out.println(isFavorite);
+		
+		/////////////////////////Zhixiong gong getStarLevel
+		
+		Map<String,String> evaluationMap = new HashMap<String,String>();
+		String filename = new String("file\\evaluation.txt");
+		File file = new File(filename);
+		BufferedReader reader = null;
+		try {
+			reader = new BufferedReader(new FileReader(file));
+			String tempString = null;
+			while ((tempString = reader.readLine()) != null) {
+			      String[] strarray=tempString.split(" "); 
+			      int i;
+			      for (i=strarray.length-1;i>=0;i--)
+			      {
+			    	  if (strarray[i].equals("1") || strarray[i].equals("2") || strarray[i].equals("3") || strarray[i].equals("4") || strarray[i].equals("5"))
+			    		  break;
+			      }
+			      if (i<0) continue;
+			      String value = new String(strarray[i]);
+			      int j;
+			      String path = new String();
+			      for (j=0;j<i;j++)
+			      {
+			    	  path += strarray[j];
+			    	  if (j+1!=i)
+			    		  path+=" ";
+			      }
+			      evaluationMap.put(path, value);
+			}
+			reader.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		} finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {}
+            }
+        }
+		String path = new String();
+		path = MusicList.get(tableMusicList.getSelectedRow()).getPath();
+
+		if (path==null)
+			return;
+		
+		String level = new String();
+		level = evaluationMap.get(path);
+		if (level!=null)
+		{
+			Integer levelInt = new Integer(level);
+			starbutton.setLevel(levelInt);
+		}
+		
+		/////////////////////////Zhixiong gong getStarLevel
+		
 	    }
 	});
     }
