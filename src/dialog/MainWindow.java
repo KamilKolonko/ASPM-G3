@@ -18,11 +18,19 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.Box;
@@ -441,8 +449,96 @@ public class MainWindow extends JFrame implements WindowListener,MouseListener {
 	panelPlayButtons.add(starbutton);
 	
 	starbutton.addMouseListener(new MouseAdapter(){
-    	public void mousePressed(MouseEvent e){
+    	public void mouseClicked(MouseEvent e){
     		
+    		Map<String,String> evaluationMap = new HashMap<String,String>();
+    		String filename = new String("file\\evaluation.txt");
+    		File file = new File(filename);
+    		BufferedReader reader = null;
+    		try {
+				reader = new BufferedReader(new FileReader(file));
+				String tempString = null;
+				while ((tempString = reader.readLine()) != null) {
+				      String[] strarray=tempString.split(" "); 
+				      int i;
+				      for (i=strarray.length-1;i>=0;i--)
+				      {
+				    	  if (strarray[i].equals("1") || strarray[i].equals("2") || strarray[i].equals("3") || strarray[i].equals("4") || strarray[i].equals("5"))
+				    		  break;
+				      }
+				      if (i<0) continue;
+				      String value = new String(strarray[i]);
+				      int j;
+				      String path = new String();
+				      for (j=0;j<i;j++)
+				      {
+				    	  path += strarray[j];
+				    	  if (j+1!=i)
+				    		  path+=" ";
+				      }
+				      evaluationMap.put(path, value);
+				}
+				reader.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			} finally {
+	            if (reader != null) {
+	                try {
+	                    reader.close();
+	                } catch (IOException e1) {}
+	            }
+	        }
+    		String path = new String();
+    		path = MusicList.get(tableMusicList.getSelectedRow()).getPath();
+
+    		if (path==null)
+    			return;
+    		
+    		int level = ((Star)e.getSource()).getLevel();
+    		if (level==0)
+    		{
+    			Iterator iterator = evaluationMap.keySet().iterator();    
+    			while (iterator.hasNext()) {   
+    			    String key = (String) iterator.next();   
+    			    if (path.equals(key)) {   
+    			    	iterator.remove(); 
+    			        evaluationMap.remove(key);    
+    			        break;
+    			     }   
+    			 }   
+    		}
+    		else
+    		{
+    			Integer lev = new Integer(level);
+    			evaluationMap.put(path, lev.toString());
+    		}
+    	      
+    	    Iterator<Map.Entry<String, String>> entries = evaluationMap.entrySet().iterator();  
+    	    /*  
+    	    try {
+				file.createNewFile();
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			}
+			*/
+    	    try {
+				FileOutputStream fs = new FileOutputStream(new File(filename));
+			} catch (FileNotFoundException e2) {
+				e2.printStackTrace();
+			}
+    	    while (entries.hasNext()) {  
+    	      
+    	        Map.Entry<String, String> entry = entries.next();  
+
+    			try {
+    	            //打开一个写文件器，构造函数中的第二个参数true表示以追加形式写文件
+    	            FileWriter writer = new FileWriter(filename, true);
+    	            writer.write(entry.getKey() + " " + entry.getValue()+"\r\n");
+    	            writer.close();
+    			} catch (IOException e1) {
+    				e1.printStackTrace();
+    			}
+    		}
     	}
     });
  
