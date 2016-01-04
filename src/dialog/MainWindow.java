@@ -169,7 +169,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	panelPlayButtons.add(horizontalGlue);
 
 	// Adding buttons for different playmodes
-	ImageIcon icon6 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
+	ImageIcon icon6 = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
 	
 	Image img6 = icon6.getImage(); 
 	Image img7 = img6.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -180,7 +180,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	seqButton.setToolTipText("Random mode");
 	seqButton.setSelected(true);
 
-	ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
+	ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 	
 	Image img8 = icon8.getImage(); 
 	Image img9 = img8.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -191,7 +191,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     singleButton.setToolTipText("Repeat song");
 	singleButton.setSelected(false);
 
-	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
+	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
 	
 	Image img10 = icon10.getImage(); 
 	Image img11 = img10.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -217,7 +217,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				loopButton.setSelected(false);
 		    }
 		    if (singleButton.isSelected() == true) {
-		    	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
+		    	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 		    	
 		    	Image img10 = icon10.getImage(); 
 		    	Image img11 = img10.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -265,7 +265,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				seqButton.setIcon(icon13);
 				seqButton.setSelected(false);
 		    }
-		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/replaySongON.png"));
+		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSongON1.png"));
 	    	
 		   	Image img12 = icon12.getImage(); 
 		   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -284,7 +284,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	    public void actionPerformed(ActionEvent arg0) {
 		if (loopButton.isSelected() == false) {
 		    if (singleButton.isSelected() == true) {
-		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/replaySong.png"));
+		    	ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 		    	
 			   	Image img12 = icon12.getImage(); 
 			   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
@@ -304,7 +304,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				seqButton.setIcon(icon13);
 				seqButton.setSelected(false);
 		    }
-		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeatON.png"));
+		    ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/repeatO.png"));
 	    	
 		   	Image img12 = icon12.getImage(); 
 		   	Image img13 = img12.getScaledInstance(30,30,java.awt.Image.SCALE_SMOOTH);
