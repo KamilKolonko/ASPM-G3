@@ -11,7 +11,7 @@ public class WidgetTableModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
     private String[] columnNames;
     private ArrayList<String> data;
-    private final String UNKNOWN = "Unknown";
+    public static final String UNKNOWN = "Unknown";
 
     public WidgetTableModel(String columnName) {
 	this.data = new ArrayList<>();
@@ -60,7 +60,7 @@ public class WidgetTableModel extends AbstractTableModel {
 	    }
 	}
     }
-
+    
     @Override
     public int getColumnCount() {
 	return columnNames.length;

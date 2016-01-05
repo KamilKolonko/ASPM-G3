@@ -173,7 +173,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	seqButton.setToolTipText("Sequential mode");
 	seqButton.setSelected(true);
 	panelPlayButtons.add(seqButton);
-	
+
 	ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 	JToggleButton singleButton = new JToggleButton("");
 	singleButton.setBackground(Color.WHITE);
@@ -181,7 +181,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	singleButton.setToolTipText("Loop one song mode");
 	singleButton.setSelected(false);
 	panelPlayButtons.add(singleButton);
-	
+
 	ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
 	JToggleButton loopButton = new JToggleButton("");
 	loopButton.setBackground(Color.WHITE);
@@ -752,7 +752,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	btnArtists.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		if (MusicList.getSize() > 0 && tableArtists.getRowCount() == 0)
+		if (MusicList.getSize() > 0 || tableArtists.getModel() instanceof Model)
 		    tableArtists.setModel(new WidgetTableModel(MusicPropertiesEnum.ARTIST.toString()));
 		artistPanel.setVisible(true);
 		playlistPanel.setVisible(false);
@@ -763,7 +763,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	btnAlbums.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		if (MusicList.getSize() > 0 && tableAlbums.getRowCount() == 0)
+		if (MusicList.getSize() > 0 || tableAlbums.getModel() instanceof Model)
 		    tableAlbums.setModel(new WidgetTableModel(MusicPropertiesEnum.ALBUM.toString()));
 		albumPanel.setVisible(true);
 		playlistPanel.setVisible(false);
@@ -774,12 +774,93 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 
 	btnYears.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
-		if (MusicList.getSize() > 0 && tableYears.getRowCount() == 0)
+		if (MusicList.getSize() > 0 || tableYears.getModel() instanceof Model)
 		    tableYears.setModel(new WidgetTableModel(MusicPropertiesEnum.YEAR.toString()));
 		yearPanel.setVisible(true);
 		playlistPanel.setVisible(false);
 		artistPanel.setVisible(false);
 		albumPanel.setVisible(false);
+	    }
+	});
+
+	tableArtists.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+		    if (!(tableArtists.getModel() instanceof Model)) {
+			String artist = (String) tableArtists.getModel().getValueAt(tableArtists.getSelectedRow(), 0);
+			if(artist.equals(WidgetTableModel.UNKNOWN)){
+			    artist = "";
+			}
+			tableArtists.setModel(new Model(MusicPropertiesEnum.ARTIST.toString(), artist));
+		    } else {
+			if (player != null) {
+			    player.stop();
+			    sliderActive.threadStop();
+			}
+			String title = (String)tableArtists.getModel().getValueAt(tableArtists.getSelectedRow(), 0);
+			String artist = (String)tableArtists.getModel().getValueAt(tableArtists.getSelectedRow(), 1);
+			String album = (String)tableArtists.getModel().getValueAt(tableArtists.getSelectedRow(), 2);
+			String year = (String)tableArtists.getModel().getValueAt(tableArtists.getSelectedRow(), 3);
+			player = new Player(MusicList.get(artist,title,album,year).getPath());
+			if (btnPlayPause.isSelected() == true)
+			    btnPlayPause.setSelected(false);
+			btnPlayPause.setSelected(true);
+		    }
+		}
+	    }
+	});
+	
+	tableAlbums.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+		    if (!(tableAlbums.getModel() instanceof Model)) {
+			String album = (String) tableAlbums.getModel().getValueAt(tableAlbums.getSelectedRow(), 0);
+			if(album.equals(WidgetTableModel.UNKNOWN)){
+			    album = "";
+			}
+			tableAlbums.setModel(new Model(MusicPropertiesEnum.ALBUM.toString(), album));
+		    } else {
+			if (player != null) {
+			    player.stop();
+			    sliderActive.threadStop();
+			}
+			String title = (String)tableAlbums.getModel().getValueAt(tableAlbums.getSelectedRow(), 0);
+			String artist = (String)tableAlbums.getModel().getValueAt(tableAlbums.getSelectedRow(), 1);
+			String album = (String)tableAlbums.getModel().getValueAt(tableAlbums.getSelectedRow(), 2);
+			String year = (String)tableAlbums.getModel().getValueAt(tableAlbums.getSelectedRow(), 3);
+			player = new Player(MusicList.get(artist,title,album,year).getPath());
+			if (btnPlayPause.isSelected() == true)
+			    btnPlayPause.setSelected(false);
+			btnPlayPause.setSelected(true);
+		    }
+		}
+	    }
+	});
+	
+	tableYears.addMouseListener(new MouseAdapter() {
+	    public void mousePressed(MouseEvent me) {
+		if (me.getClickCount() == 2) {
+		    if (!(tableYears.getModel() instanceof Model)) {
+			String year = (String) tableYears.getModel().getValueAt(tableYears.getSelectedRow(), 0);
+			if(year.equals(WidgetTableModel.UNKNOWN)){
+			    year = "";
+			}
+			tableYears.setModel(new Model(MusicPropertiesEnum.YEAR.toString(), year));
+		    } else {
+			if (player != null) {
+			    player.stop();
+			    sliderActive.threadStop();
+			}
+			String title = (String)tableYears.getModel().getValueAt(tableYears.getSelectedRow(), 0);
+			String artist = (String)tableYears.getModel().getValueAt(tableYears.getSelectedRow(), 1);
+			String album = (String)tableYears.getModel().getValueAt(tableYears.getSelectedRow(), 2);
+			String year = (String)tableYears.getModel().getValueAt(tableYears.getSelectedRow(), 3);
+			player = new Player(MusicList.get(artist,title,album,year).getPath());
+			if (btnPlayPause.isSelected() == true)
+			    btnPlayPause.setSelected(false);
+			btnPlayPause.setSelected(true);
+		    }
+		}
 	    }
 	});
 

@@ -28,6 +28,18 @@ final public class MusicList {
 	return list.get(id);
     }
     
+    public static Music get(String artist, String title, String album, String year){
+	for(Music music : list){
+	    if((music.getArtist().equals(artist) &&
+		    music.getTitle().equals(title) &&
+		    music.getAlbum().equals(album) &&
+		    music.getYear().equals(year)) || music.getName().equals(title)){
+		return music;
+	    }
+	}
+	return null;
+    }
+    
    
     public static int getSize(){
 	return list.size();
