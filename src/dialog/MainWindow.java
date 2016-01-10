@@ -669,16 +669,18 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			}
 		});
 		mnFile.add(mntmLoadLyrics);
-
+		
 		textField = new JTextField();
+		textField.setText("Search Field");
+		textField.setMaximumSize(new Dimension(120, 30));
 		textField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				tableMusicList.setModel(new Model(textField.getText()));
 			}
 		});
+		
 		menuBar.add(textField);
 		textField.setColumns(10);
-		
 				final JToggleButton favorite2 = new JToggleButton("");
 				favorite2.setIcon(icon1);
 				favorite2.setToolTipText("Like");

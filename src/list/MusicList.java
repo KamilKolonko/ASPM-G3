@@ -25,7 +25,6 @@ final public class MusicList {
     }
 
     public static Music get(int id) {
-    	System.out.println(id);
 	return list.get(id);
     }
     
