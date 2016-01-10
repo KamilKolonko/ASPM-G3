@@ -163,7 +163,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon6 = new ImageIcon(MainWindow.class.getResource("/icons/randomON.png"));
 		final JToggleButton seqButton = new JToggleButton("");
 		seqButton.setBackground(Color.WHITE);
-		seqButton.setIcon(new ImageIcon(icon6.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH)));
+		seqButton.setIcon(new ImageIcon(icon6.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
 		seqButton.setToolTipText("Sequential mode");
 		seqButton.setSelected(true);
 		panelPlayButtons.add(seqButton);
@@ -171,7 +171,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon8 = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 		final JToggleButton singleButton = new JToggleButton("");
 		singleButton.setBackground(Color.WHITE);
-		singleButton.setIcon(new ImageIcon(icon8.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH)));
+		singleButton.setIcon(new ImageIcon(icon8.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
 		singleButton.setToolTipText("Loop one song mode");
 		singleButton.setSelected(false);
 		panelPlayButtons.add(singleButton);
@@ -179,7 +179,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon10 = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
 		final JToggleButton loopButton = new JToggleButton("");
 		loopButton.setBackground(Color.WHITE);
-		loopButton.setIcon(new ImageIcon(icon10.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH)));
+		loopButton.setIcon(new ImageIcon(icon10.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH)));
 		loopButton.setToolTipText("Loop all songs mode");
 		loopButton.setSelected(false);
 		panelPlayButtons.add(loopButton);
@@ -196,7 +196,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon12 = new ImageIcon(MainWindow.class.getResource("/icons/backwards.png"));
 
 		Image img12 = icon12.getImage();
-		Image img13 = img12.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img13 = img12.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon13 = new ImageIcon(img13);
 
 		btnBackwards = new JButton("");
@@ -208,13 +208,13 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon14 = new ImageIcon(MainWindow.class.getResource("/icons/pause2.png"));
 
 		Image img14 = icon14.getImage();
-		Image img15 = img14.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img15 = img14.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon15 = new ImageIcon(img15);
 
 		ImageIcon icon16 = new ImageIcon(MainWindow.class.getResource("/icons/play.png"));
 
 		Image img16 = icon16.getImage();
-		Image img17 = img16.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img17 = img16.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon17 = new ImageIcon(img17);
 
 		btnPlayPause = new JToggleButton("");
@@ -228,7 +228,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon18 = new ImageIcon(MainWindow.class.getResource("/icons/forwards.png"));
 
 		Image img18 = icon18.getImage();
-		Image img19 = img18.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img19 = img18.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon19 = new ImageIcon(img19);
 
 		btnForwards = new JButton("");
@@ -240,7 +240,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon20 = new ImageIcon(MainWindow.class.getResource("/icons/speaker.png"));
 
 		Image img20 = icon20.getImage();
-		Image img21 = img20.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img21 = img20.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon21 = new ImageIcon(img21);
 
 		JLabel lblVolume = new JLabel("");
