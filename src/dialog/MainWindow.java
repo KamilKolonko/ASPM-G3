@@ -130,13 +130,6 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		Image img4 = img2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon3 = new ImageIcon(img4);
 
-		final JToggleButton favorite2 = new JToggleButton("");
-		favorite2.setIcon(icon1);
-		favorite2.setToolTipText("Like");
-		favorite2.setSelectedIcon(icon3);
-
-		menuBar.add(favorite2);
-
 		JMenuItem mntmAbout = new JMenuItem("About");
 		mnHelp.add(mntmAbout);
 		contentPane = new JPanel();
@@ -685,6 +678,13 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		});
 		menuBar.add(textField);
 		textField.setColumns(10);
+		
+				final JToggleButton favorite2 = new JToggleButton("");
+				favorite2.setIcon(icon1);
+				favorite2.setToolTipText("Like");
+				favorite2.setSelectedIcon(icon3);
+				
+						menuBar.add(favorite2);
 
 		btnPlayPause.addItemListener(new ItemListener() {
 			public void itemStateChanged(ItemEvent e) {
