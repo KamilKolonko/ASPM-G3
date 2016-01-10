@@ -15,6 +15,24 @@ public class Model extends AbstractTableModel {
     public Model() {
 	refresh();
     }
+    
+    public Model(String searchedText){
+    	data = new ArrayList<>();
+    	for (int i = 0; i < MusicList.getList().size(); i++) {
+    		Music music = MusicList.get(i);
+    		if(music.toString().toLowerCase().contains(searchedText.toLowerCase())){
+    			ArrayList<String> row = new ArrayList<>();
+        	    if (music.getTitle() != null && !music.getTitle().isEmpty())
+        		row.add(music.getTitle());
+        	    else
+        		row.add(music.getName());
+        	    row.add(music.getArtist());
+        	    row.add(music.getAlbum());
+        	    row.add(String.valueOf(music.getYear()));
+        	    data.add(row);
+			}
+    	}
+    }
 
     public Model(String columnName, String value) {
 	data = new ArrayList<>();

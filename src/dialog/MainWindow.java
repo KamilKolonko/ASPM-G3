@@ -97,6 +97,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
     private JMenuItem item, item1;
     private JMenu del;
     private JMenuBar menuBar;
+    private JTextField textField;
 
     public MainWindow() {
 	setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -675,6 +676,15 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	    }
 	});
 	mnFile.add(mntmLoadLyrics);
+	
+	textField = new JTextField();
+	textField.addActionListener(new ActionListener() {
+		public void actionPerformed(ActionEvent arg0) {
+			tableMusicList.setModel(new Model(textField.getText()));
+		}
+	});
+	menuBar.add(textField);
+	textField.setColumns(10);
 
 	btnPlayPause.addItemListener(new ItemListener() {
 	    public void itemStateChanged(ItemEvent e) {

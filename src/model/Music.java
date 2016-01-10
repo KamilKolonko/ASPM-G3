@@ -98,6 +98,10 @@ public class Music {
 	return getId() + "," + getName() + "," + getPath() + "," + getArtist() + "," + getTitle() + "," + getAlbum()
 		+ "," + getYear() + "," + getFavorite();
     }
+   
+    public String toString() {
+    	return getArtist() + getTitle()+ getAlbum()+ getYear();
+        }
 
     // public ImageIcon getHeart() {
     // return new
