@@ -978,39 +978,37 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		    }
 
 		}
-		// System.out.println(isFavorite);
+		
 
-		///////////////////////// Zhixiong gong getStarLevel
+		
+		  Map<String, String> evaluationMap = new HashMap<String,
+		  String>(); String filename = new
+		  String("file\\evaluation.txt"); File file = new
+		  File(filename); BufferedReader reader = null; try { reader =
+		  new BufferedReader(new FileReader(file)); String tempString =
+		  null; while ((tempString = reader.readLine()) != null) {
+		  String[] strarray = tempString.split(" "); int i; for (i =
+		  strarray.length - 1; i >= 0; i--) { if
+		  (strarray[i].equals("1") || strarray[i].equals("2") ||
+		  strarray[i].equals("3") || strarray[i].equals("4") ||
+		  strarray[i].equals("5")) break; } if (i < 0) continue; String
+		  value = new String(strarray[i]); int j; String path = new
+		  String(); for (j = 0; j < i; j++) { path += strarray[j]; if
+		  (j + 1 != i) path += " "; } evaluationMap.put(path, value); }
+		  reader.close(); } catch (IOException e1) {
+		  e1.printStackTrace(); } finally { if (reader != null) { try {
+		  reader.close(); } catch (IOException e1) { } } } String path
+		  = new String(); path =
+		  MusicList.get(tableMusicList.getSelectedRow()).getPath();
+		  
+		  if (path == null) return;
+		  
+		  String level = new String(); level = evaluationMap.get(path);
+		  if (level != null) { Integer levelInt = new Integer(level);
+		  starbutton.setLevel(levelInt); }
+		 
 
-		/*
-		 * Map<String, String> evaluationMap = new HashMap<String,
-		 * String>(); String filename = new
-		 * String("file\\evaluation.txt"); File file = new
-		 * File(filename); BufferedReader reader = null; try { reader =
-		 * new BufferedReader(new FileReader(file)); String tempString =
-		 * null; while ((tempString = reader.readLine()) != null) {
-		 * String[] strarray = tempString.split(" "); int i; for (i =
-		 * strarray.length - 1; i >= 0; i--) { if
-		 * (strarray[i].equals("1") || strarray[i].equals("2") ||
-		 * strarray[i].equals("3") || strarray[i].equals("4") ||
-		 * strarray[i].equals("5")) break; } if (i < 0) continue; String
-		 * value = new String(strarray[i]); int j; String path = new
-		 * String(); for (j = 0; j < i; j++) { path += strarray[j]; if
-		 * (j + 1 != i) path += " "; } evaluationMap.put(path, value); }
-		 * reader.close(); } catch (IOException e1) {
-		 * e1.printStackTrace(); } finally { if (reader != null) { try {
-		 * reader.close(); } catch (IOException e1) { } } } String path
-		 * = new String(); path =
-		 * MusicList.get(tableMusicList.getSelectedRow()).getPath();
-		 * 
-		 * if (path == null) return;
-		 * 
-		 * String level = new String(); level = evaluationMap.get(path);
-		 * if (level != null) { Integer levelInt = new Integer(level);
-		 * starbutton.setLevel(levelInt); }
-		 */
-
-		///////////////////////// Zhixiong gong getStarLevel
+	
 
 	    }
 	});
