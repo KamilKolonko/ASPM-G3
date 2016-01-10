@@ -100,7 +100,7 @@ public class Music {
     }
    
     public String toString() {
-    	return getArtist() + getTitle()+ getAlbum()+ getYear();
+    	return getName() + getArtist() + getTitle()+ getAlbum()+ getYear();
         }
 
     // public ImageIcon getHeart() {
