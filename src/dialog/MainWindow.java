@@ -123,11 +123,11 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 		ImageIcon icon2 = new ImageIcon(MainWindow.class.getResource("/icons/like.png"));
 
 		Image img = icon.getImage();
-		Image img3 = img.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img3 = img.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon1 = new ImageIcon(img3);
 
 		Image img2 = icon2.getImage();
-		Image img4 = img2.getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH);
+		Image img4 = img2.getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH);
 		ImageIcon icon3 = new ImageIcon(img4);
 
 		JMenuItem mntmAbout = new JMenuItem("About");
