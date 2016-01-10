@@ -888,7 +888,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/repeatO.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					loopButton.setIcon(scaledIcon);
 
 					playMode = PlayModeEnum.LOOP;
@@ -898,7 +898,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				} else {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/repeat.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					loopButton.setIcon(scaledIcon);
 				}
 			}
@@ -909,7 +909,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/repeatSongON1.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					singleButton.setIcon(scaledIcon);
 
 					playMode = PlayModeEnum.SINGLE;
@@ -919,7 +919,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				} else {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/repeatSong1.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					singleButton.setIcon(scaledIcon);
 				}
 			}
@@ -930,7 +930,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				if (e.getStateChange() == ItemEvent.SELECTED) {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/randomON.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					seqButton.setIcon(scaledIcon);
 
 					playMode = PlayModeEnum.SEQUENTIAL;
@@ -940,7 +940,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 				} else {
 					ImageIcon icon = new ImageIcon(MainWindow.class.getResource("/icons/random.png"));
 					ImageIcon scaledIcon = new ImageIcon(
-							icon.getImage().getScaledInstance(30, 30, java.awt.Image.SCALE_SMOOTH));
+							icon.getImage().getScaledInstance(20, 20, java.awt.Image.SCALE_SMOOTH));
 					seqButton.setIcon(scaledIcon);
 				}
 			}
