@@ -737,9 +737,7 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	btnBackwards.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		int musicNumber = tableMusicList.getSelectedRow();
-		if (musicNumber == 0) {
-		    player.play();
-		} else {
+		if (musicNumber != 0) {
 		    if (musicNumber == 1) {
 			tableMusicList.setRowSelectionInterval(0, 0);
 		    } else {
@@ -750,12 +748,13 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 			player.pause();
 			player = new Player(MusicList.getList().get(musicNumber - 1).getPath());
 			updateCurrentSongTextField(MusicList.getList().get(musicNumber - 1));
-			player.play();
 		    } else {
 			player = new Player(MusicList.getList().get(musicNumber - 1).getPath());
 			updateCurrentSongTextField(MusicList.getList().get(musicNumber - 1));
-			player.play();
 		    }
+		}
+		if (btnPlayPause.isSelected()) {
+		    player.play();
 		}
 	    }
 	});
@@ -763,22 +762,20 @@ public class MainWindow extends JFrame implements WindowListener, MouseListener 
 	btnForwards.addActionListener(new ActionListener() {
 	    public void actionPerformed(ActionEvent e) {
 		int musicNumber = tableMusicList.getSelectedRow();
-		if (musicNumber == (tableMusicList.getRowCount() - 1)) {
-		    player.play();
-		} else {
-
+		if (musicNumber != (tableMusicList.getRowCount() - 1)) {
 		    tableMusicList.setRowSelectionInterval(musicNumber, musicNumber + 1);
 
 		    if (player != null && player.isPlaying()) {
 			player.pause();
 			player = new Player(MusicList.getList().get(musicNumber + 1).getPath());
 			updateCurrentSongTextField(MusicList.getList().get(musicNumber + 1));
-			player.play();
 		    } else {
 			player = new Player(MusicList.getList().get(musicNumber + 1).getPath());
 			updateCurrentSongTextField(MusicList.getList().get(musicNumber + 1));
-			player.play();
 		    }
+		}
+		if (btnPlayPause.isSelected()) {
+		    player.play();
 		}
 	    }
 	});
